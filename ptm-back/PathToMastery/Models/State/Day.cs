@@ -1,23 +1,25 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace PathToMastery.Models.State
 {
     public class Day : DayMeta
     {
-        public int Dow { get; set; }
-        public int MsId { get; set; } = -1;
-        
-        [JsonConverter(typeof(StringEnumConverter))]
-        public DateType Type { get; set; } = DateType.N;
-    }
+        [JsonIgnore]
+        public DateTimeOffset Date { get; set; }
 
-    public enum DateType
-    {
-        N,
-        Link,
-        Done,
-        Future,
-        Break,
+        public int Dow => (int)Date.DayOfWeek;
+        
+        public Day(DayMeta meta, int offset)
+        {
+            D = meta.D;
+            M = meta.M;
+            Y = meta.Y;
+            Type = meta.Type;
+            MsId = meta.MsId;
+            
+            var date = new DateTime(Y, M, D);
+            Date = new DateTimeOffset(date, TimeSpan.FromHours(offset));
+        }
     }
 }

@@ -18,16 +18,19 @@ namespace PathToMastery.Controllers
     {
         private readonly ISocialService _socialService;
         private readonly ConcurrencyService _concurrencyService;
+        private readonly PathService _pathService;
         private readonly ILogger<MainController> _logger;
 
         public MainController(
             ISocialService socialService,
             ConcurrencyService concurrencyService,
+            PathService pathService,
             ILogger<MainController> logger
         )
         {
             _socialService = socialService;
             _concurrencyService = concurrencyService;
+            _pathService = pathService;
             _logger = logger;
         }
         
@@ -44,10 +47,45 @@ namespace PathToMastery.Controllers
         [HttpPost("/init")]
         public Task Init()
         {
-            return HandleRequest<InitRequest, StateResponse>(req =>
-            {
-                throw new NotImplementedException();
-            });
+            return HandleRequest<InitRequest, StateResponse>(req => new StateResponse(_pathService.LoadUser(req.UserId)));
+        }
+
+        [HttpPost("/create")]
+        public Task Create()
+        {
+            return HandleRequest<CreateRequest, StateResponse>(
+                req =>
+                    new StateResponse(
+                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days)
+                    )
+            );
+        }
+        
+        [HttpPost("/edit")]
+        public Task Edit()
+        {
+            return HandleRequest<CreateRequest, StateResponse>(
+                req =>
+                    new StateResponse(
+                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days)
+                    )
+            );
+        }
+        
+        [HttpPost("/delete")]
+        public Task Delete()
+        {
+            return HandleRequest<IdRequest, StateResponse>(
+                req => new StateResponse(_pathService.DeletePath(req.UserId, req.Id))
+            );
+        }
+        
+        [HttpPost("/done")]
+        public Task Done()
+        {
+            return HandleRequest<IdRequest, StateResponse>(
+                req => new StateResponse(_pathService.SetDone(req.UserId, req.Id))
+            );
         }
         
         private Task HandleRequest<TRequest, TResponse>(Func<TRequest, TResponse> handler, bool limitRatio = false) where TRequest : BaseRequest

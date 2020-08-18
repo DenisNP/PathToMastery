@@ -4,10 +4,19 @@ namespace PathToMastery.Models
 {
     public class PathData
     {
-        public string Name { get; set; }
-        public string Icon { get; set; }
-        public int Color { get; set; } = 1;
+        public string Name { get; set; } = "";
+        public string Icon { get; set; } = "";
+        public int Color { get; set; } = 0;
         public int[] Days { get; set; } = new int[0];
         public List<DayMeta> Done { get; set; } = new List<DayMeta>();
+
+        public void Clear()
+        {
+            Name = "";
+            Icon = "";
+            Color = 0;
+            Days = new int[0];
+            Done = new List<DayMeta>();
+        }
     }
 }

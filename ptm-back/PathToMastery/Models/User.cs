@@ -2,7 +2,7 @@
 
 namespace PathToMastery.Models
 {
-    public class User
+    public class User : IIdentity
     {
         public string Id { get; set; }
         
