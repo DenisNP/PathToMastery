@@ -1,0 +1,6 @@
+/ptm-front/.idea/
+/ptm-front/node_modules
+/ptm-back/.idea/
+/ptm-back/pd-back/bin
+/ptm-back/pd-back/obj
+/assets/
