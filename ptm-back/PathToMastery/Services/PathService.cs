@@ -53,10 +53,10 @@ namespace PathToMastery.Services
             return LoadUser(user); 
         }
 
-        public State SetDone(string userId, int id)
+        public State SetDone(string userId, int id, int offset)
         {
             var user = _dbService.ById<User>(userId, false);
-            SetDone(PathFromId(user, id));
+            SetDone(PathFromId(user, id), offset);
             
             _dbService.UpdateAsync(user);
             return LoadUser(user); 
@@ -84,8 +84,9 @@ namespace PathToMastery.Services
             data.Days = days.Distinct().OrderBy(x => x).ToArray();
         }
 
-        private void SetDone(PathData data)
+        private void SetDone(PathData data, int offset)
         {
+            var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
             throw new NotImplementedException();
         }
 

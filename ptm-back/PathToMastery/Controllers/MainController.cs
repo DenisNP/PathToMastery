@@ -84,7 +84,7 @@ namespace PathToMastery.Controllers
         public Task Done()
         {
             return HandleRequest<IdRequest, StateResponse>(
-                req => new StateResponse(_pathService.SetDone(req.UserId, req.Id))
+                req => new StateResponse(_pathService.SetDone(req.UserId, req.Id, req.Offset))
             );
         }
         
