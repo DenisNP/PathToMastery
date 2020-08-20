@@ -17,9 +17,19 @@ namespace PathToMastery.Models.State
             Y = meta.Y;
             Type = meta.Type;
             MsId = meta.MsId;
-            
-            var date = new DateTime(Y, M, D);
-            Date = new DateTimeOffset(date, TimeSpan.FromHours(offset));
+
+            Date = ToDateTimeOffset(offset);
+        }
+
+        public Day(DateTimeOffset date, DateType type, int milestoneId, int offset)
+        {
+            D = date.Day;
+            M = date.Month;
+            Y = date.Year;
+            Type = type;
+            MsId = milestoneId;
+
+            Date = ToDateTimeOffset(offset);
         }
     }
 }

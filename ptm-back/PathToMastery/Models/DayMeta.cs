@@ -34,6 +34,17 @@ namespace PathToMastery.Models
                 MsId = int.Parse(arr[4])
             };
         }
+        
+        public DateTimeOffset ToDateTimeOffset(int offset)
+        {
+            var date = new DateTime(Y, M, D);
+            return new DateTimeOffset(date, TimeSpan.FromHours(offset));
+        }
+
+        public bool IsDayOf(DateTimeOffset offset)
+        {
+            return D == offset.Day && M == offset.Month && Y == offset.Year;
+        }
     }
     
     public enum DateType
@@ -41,7 +52,9 @@ namespace PathToMastery.Models
         N = 0,
         Link = 1,
         Done = 2,
-        Future = 3,
-        Break = 4,
+        DoneBreak = 3,
+        DoneLink = 4,
+        Checkpoint = 5,
+        Break = 6,
     }
 }

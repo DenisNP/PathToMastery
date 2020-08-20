@@ -47,7 +47,9 @@ namespace PathToMastery.Controllers
         [HttpPost("/init")]
         public Task Init()
         {
-            return HandleRequest<InitRequest, StateResponse>(req => new StateResponse(_pathService.LoadUser(req.UserId)));
+            return HandleRequest<InitRequest, StateResponse>(
+                req => new StateResponse(_pathService.LoadUser(req.UserId, req.Offset))
+            );
         }
 
         [HttpPost("/create")]
@@ -56,7 +58,7 @@ namespace PathToMastery.Controllers
             return HandleRequest<CreateRequest, StateResponse>(
                 req =>
                     new StateResponse(
-                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days)
+                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Offset)
                     )
             );
         }
@@ -67,7 +69,7 @@ namespace PathToMastery.Controllers
             return HandleRequest<CreateRequest, StateResponse>(
                 req =>
                     new StateResponse(
-                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days)
+                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Offset)
                     )
             );
         }
@@ -76,7 +78,7 @@ namespace PathToMastery.Controllers
         public Task Delete()
         {
             return HandleRequest<IdRequest, StateResponse>(
-                req => new StateResponse(_pathService.DeletePath(req.UserId, req.Id))
+                req => new StateResponse(_pathService.DeletePath(req.UserId, req.Id, req.Offset))
             );
         }
         
@@ -130,12 +132,6 @@ namespace PathToMastery.Controllers
 
                 _logger.LogInformation($"RESPONSE:\n{stringResponse.SafeSubstring(300)}");
                 return Response.WriteAsync(stringResponse);
-            }
-            catch (KeyNotFoundException e)
-            {
-                _logger.LogWarning(e.Message);
-                Response.StatusCode = 400;
-                return Response.WriteAsync(new ErrorResponse("Такой дуэли больше нет").ToString()); // TODO error codes
             }
             catch (Exception e)
             {
