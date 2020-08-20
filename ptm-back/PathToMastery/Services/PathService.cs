@@ -193,7 +193,64 @@ namespace PathToMastery.Services
         private void SetDone(PathData data, int offset)
         {
             var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
-            throw new NotImplementedException();
+            now -= now.TimeOfDay;
+
+            var dow = (int) now.DayOfWeek;
+            if (dow == 0) dow = 7;
+            
+            // check if it can be done
+            if (!data.Days.Contains(dow) || data.Done.Any(d => d.IsDayOf(now))) return;
+            
+            // check prev done
+            var prevDone = data.Done.LastOrDefault();
+            if (prevDone != null)
+            {
+                var prevDowIndex = data.Days.ToList().IndexOf(dow) - 1;
+                if (prevDowIndex < 0) prevDowIndex = data.Days.Length - 1;
+                var prevDate = prevDone.ToDateTimeOffset(offset);
+                
+                // if prev dow is prev element of Days array, and there is less than week passed, it is not break
+                if ((int)prevDate.DayOfWeek == data.Days[prevDowIndex] && (now - prevDate).TotalDays <= 7.0)
+                {
+                    prevDone.Type = DateType.DoneLink;
+                }
+                else
+                {
+                    prevDone.Type = DateType.DoneBreak;
+                }
+            }
+            
+            // find milestone
+            DayMeta earliestLink = null;
+            for (var i = data.Done.Count - 1; i >= 0; i--)
+            {
+                if (data.Done[i].Type != DateType.DoneBreak)
+                {
+                    earliestLink = data.Done[i];
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            var milestoneId = 0;
+            if (earliestLink != null)
+            {
+                var milestone = FindMilestone(data, now, earliestLink.ToDateTimeOffset(offset));
+                if (milestone != null) milestoneId = milestone.Id;
+            }
+            
+            // create new DayMeta object
+            var dayMeta = new DayMeta
+            {
+                D = now.Day,
+                M = now.Month,
+                Y = now.Year,
+                MsId = milestoneId,
+                Type = DateType.Done
+            };
+            data.Done.Add(dayMeta);
         }
 
         private Path GenerateCalendar(PathData data, int offset)
@@ -220,7 +277,7 @@ namespace PathToMastery.Services
             var isTodayDone = false;
             var wasCheckpoint = false;
             var isMilestoneSet = false;
-            var earliestUnbreakableStart = DateTimeOffset.MinValue;
+            var earliestLink = DateTimeOffset.MinValue;
             var path = new Path
             {
                 Data = data
@@ -248,14 +305,14 @@ namespace PathToMastery.Services
                         if (
                             done.Type == DateType.DoneLink
                             || done.Type == DateType.Done
-                            && earliestUnbreakableStart == DateTimeOffset.MinValue
+                            && earliestLink == DateTimeOffset.MinValue
                         )
                         {
-                            earliestUnbreakableStart = done.ToDateTimeOffset(offset);
+                            earliestLink = done.ToDateTimeOffset(offset);
                         }
                         else if (done.Type == DateType.DoneBreak)
                         {
-                            earliestUnbreakableStart = DateTimeOffset.MinValue;
+                            earliestLink = DateTimeOffset.MinValue;
                         }
                         continue;
                     }
@@ -263,19 +320,24 @@ namespace PathToMastery.Services
                 
                 // add simple day
                 var dow = (int) date.DayOfWeek;
+                if (dow == 0) dow = 7;
                 var type = DateType.N;
                 if (data.Days.Contains(dow))
                 {
                     // checkpoint day not done
                     if (date < now)
                     {
-                        if (data.Done.Count > 0) type = DateType.Break;
+                        if (data.Done.Count > 0)
+                        {
+                            type = DateType.Break;
+                            earliestLink = DateTimeOffset.MinValue;
+                        }
                     }
                     else if (!wasCheckpoint)
                     {
                         type = DateType.Checkpoint;
                         wasCheckpoint = true;
-                        if (earliestUnbreakableStart == DateTimeOffset.MinValue) earliestUnbreakableStart = date;
+                        if (earliestLink == DateTimeOffset.MinValue) earliestLink = date;
                     }
                 }
                 else if (date < now && data.Done.Count > nextDoneIndex)
@@ -292,12 +354,10 @@ namespace PathToMastery.Services
                     if (isNextDone) type = DateType.Link;
                 }
                 
-                if (date >= now && !isMilestoneSet && earliestUnbreakableStart != DateTimeOffset.MinValue)
+                if (date >= now && !isMilestoneSet && earliestLink != DateTimeOffset.MinValue)
                 {
                     // find next milestone
-                    var daysFromStart = (int)Math.Round((date - earliestUnbreakableStart).TotalDays);
-                    var milestone = _milestones
-                        .FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone == daysFromStart);
+                    var milestone = FindMilestone(data, date, earliestLink);
 
                     if (milestone != null)
                     {
@@ -314,6 +374,12 @@ namespace PathToMastery.Services
             path.CanBeDone = data.Days.Contains((int) now.DayOfWeek) && !isTodayDone;
             
             return path;
+        }
+
+        private Milestone FindMilestone(PathData data, DateTimeOffset date, DateTimeOffset earliestLink)
+        {
+            var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays);
+            return _milestones.FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone == daysFromStart);
         }
 
         private DateTimeOffset ToClosestUp(DateTimeOffset d, int dayOfWeek)
