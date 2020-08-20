@@ -378,7 +378,7 @@ namespace PathToMastery.Services
 
         private Milestone FindMilestone(PathData data, DateTimeOffset date, DateTimeOffset earliestLink)
         {
-            var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays);
+            var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays) - 1;
             return _milestones.FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone == daysFromStart);
         }
 
