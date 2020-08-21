@@ -234,12 +234,9 @@ namespace PathToMastery.Services
                 }
             }
 
-            var milestoneId = 0;
-            if (earliestLink != null)
-            {
-                var milestone = FindMilestone(data, now, earliestLink.ToDateTimeOffset(offset));
-                if (milestone != null) milestoneId = milestone.Id;
-            }
+            var milestoneDays = earliestLink != null
+                ? FindMilestoneDays(data, now, earliestLink.ToDateTimeOffset(offset))
+                : 0;
             
             // create new DayMeta object
             var dayMeta = new DayMeta
@@ -247,7 +244,7 @@ namespace PathToMastery.Services
                 D = now.Day,
                 M = now.Month,
                 Y = now.Year,
-                MsId = milestoneId,
+                MsD = milestoneDays,
                 Type = DateType.Done
             };
             data.Done.Add(dayMeta);
@@ -286,7 +283,7 @@ namespace PathToMastery.Services
             for (var d = 0; d < daysDiff; d++)
             {
                 Day day;
-                var milestoneId = 0;
+                var milestoneDays = 0;
                 var date = min + TimeSpan.FromDays(d);
                 if (data.Done.Count > nextDoneIndex)
                 {
@@ -354,19 +351,14 @@ namespace PathToMastery.Services
                     if (isNextDone) type = DateType.Link;
                 }
                 
-                if (date >= now && !isMilestoneSet && earliestLink != DateTimeOffset.MinValue)
+                if (date >= now && !isMilestoneSet && earliestLink != DateTimeOffset.MinValue && data.Days.Contains(dow))
                 {
                     // find next milestone
-                    var milestone = FindMilestone(data, date, earliestLink);
-
-                    if (milestone != null)
-                    {
-                        milestoneId = milestone.Id;
-                        isMilestoneSet = true;
-                    }
+                    milestoneDays = FindMilestoneDays(data, date, earliestLink);
+                    if (milestoneDays > 0) isMilestoneSet = true;
                 }
 
-                day = new Day(date, type, milestoneId, offset);
+                day = new Day(date, type, milestoneDays, offset);
                 path.Days.Add(day);
             }
             
@@ -376,10 +368,11 @@ namespace PathToMastery.Services
             return path;
         }
 
-        private Milestone FindMilestone(PathData data, DateTimeOffset date, DateTimeOffset earliestLink)
+        private int FindMilestoneDays(PathData data, DateTimeOffset date, DateTimeOffset earliestLink)
         {
-            var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays) - 1;
-            return _milestones.FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone == daysFromStart);
+            var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays) + 1;
+            var milestone = _milestones.FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone <= daysFromStart);
+            return milestone == null ? 0 : daysFromStart;
         }
 
         private DateTimeOffset ToClosestUp(DateTimeOffset d, int dayOfWeek)
