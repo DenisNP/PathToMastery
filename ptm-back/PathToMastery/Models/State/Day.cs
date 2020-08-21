@@ -16,18 +16,18 @@ namespace PathToMastery.Models.State
             M = meta.M;
             Y = meta.Y;
             Type = meta.Type;
-            MsId = meta.MsId;
+            MsD = meta.MsD;
 
             Date = ToDateTimeOffset(offset);
         }
 
-        public Day(DateTimeOffset date, DateType type, int milestoneId, int offset)
+        public Day(DateTimeOffset date, DateType type, int milestoneDays, int offset)
         {
             D = date.Day;
             M = date.Month;
             Y = date.Year;
             Type = type;
-            MsId = milestoneId;
+            MsD = milestoneDays;
 
             Date = ToDateTimeOffset(offset);
         }
