@@ -6,6 +6,7 @@
 
 <script>
 import Main from '@/views/Main.vue';
+import Create from '@/views/Create.vue';
 
 export default {
     name: 'App',
@@ -17,6 +18,10 @@ export default {
                     {
                         path: '/',
                         component: Main,
+                    },
+                    {
+                        path: '/create/:pathId',
+                        component: Create,
                     },
                 ],
                 dialog: {

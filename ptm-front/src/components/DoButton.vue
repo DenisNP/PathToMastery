@@ -1,5 +1,5 @@
 <template>
-    <div class="relative">
+    <div class="relative" @click="edit">
         <div class="btn-color" :style="`background: ${gradient};`"/>
         <div class="icon-frame"/>
         <div class="icon" :class="{'fill-icon': !data.icon}">{{data.icon || '➕'}}</div>
@@ -15,6 +15,12 @@ export default {
         },
         gradient() {
             return `linear-gradient(10deg, ${this.color[1]} 0%, ${this.color[2]} 100%)`;
+        },
+    },
+    methods: {
+        edit() {
+            console.log(111);
+            this.$emit('double-tap');
         },
     },
     props: {

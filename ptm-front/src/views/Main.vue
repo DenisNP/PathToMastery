@@ -1,7 +1,7 @@
 <template>
     <f7-page>
         <f7-navbar>
-            <img src="../assets/logo.svg" class="logo-image ml3">
+            <img src="../assets/logo.svg" class="logo-image ml3" slot="left">
         </f7-navbar>
         <calendar/>
         <div class="w-100 mt4 relative">
@@ -14,6 +14,7 @@
                         'btn-main': current === 1,
                         'btn-right': current === 3,
                     }"
+                    @double-tap="edit(1)"
                 />
                 <do-button
                     class="btn"
@@ -23,6 +24,7 @@
                         'btn-main': current === 2,
                         'btn-right': current === 1,
                     }"
+                    @double-tap="edit(2)"
                 />
                 <do-button
                     class="btn"
@@ -32,6 +34,7 @@
                         'btn-main': current === 3,
                         'btn-right': current === 2,
                     }"
+                    @double-tap="edit(3)"
                 />
             </div>
         </div>
@@ -47,6 +50,11 @@ export default {
     computed: {
         current() {
             return this.$store.state.calendarSelected;
+        },
+    },
+    methods: {
+        edit(num) {
+            this.$f7.views.main.router.navigate(`/create/${num}`);
         },
     },
     components: { DoButton, Calendar },
