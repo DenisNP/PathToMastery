@@ -2428,6 +2428,10 @@ export default new Vuex.Store({
             return months[state.currentMonth - 1];
         },
     },
-    mutations: {},
+    mutations: {
+        setSelected(state, sel) {
+            state.calendarSelected = sel;
+        },
+    },
     actions: {},
 });

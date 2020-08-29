@@ -8,33 +8,39 @@
             <div class="buttons-block ml-auto mr-auto">
                 <do-button
                     class="btn"
-                    :data="$store.state.first.data"
+                    :data="$store.state.first"
                     :class="{
                         'btn-left': current === 2,
                         'btn-main': current === 1,
                         'btn-right': current === 3,
                     }"
-                    @double-tap="edit(1)"
+                    @edit="edit(1)"
+                    @activate="activate(1)"
+                    :active="current === 1"
                 />
                 <do-button
                     class="btn"
-                    :data="$store.state.second.data"
+                    :data="$store.state.second"
                     :class="{
                         'btn-left': current === 3,
                         'btn-main': current === 2,
                         'btn-right': current === 1,
                     }"
-                    @double-tap="edit(2)"
+                    @edit="edit(2)"
+                    @activate="activate(2)"
+                    :active="current === 2"
                 />
                 <do-button
                     class="btn"
-                    :data="$store.state.third.data"
+                    :data="$store.state.third"
                     :class="{
                         'btn-left': current === 1,
                         'btn-main': current === 3,
                         'btn-right': current === 2,
                     }"
-                    @double-tap="edit(3)"
+                    @edit="edit(3)"
+                    @activate="activate(3)"
+                    :active="current === 3"
                 />
             </div>
         </div>
@@ -55,6 +61,9 @@ export default {
     methods: {
         edit(num) {
             this.$f7.views.main.router.navigate(`/create/${num}`);
+        },
+        activate(num) {
+            this.$store.commit('setSelected', num);
         },
     },
     components: { DoButton, Calendar },

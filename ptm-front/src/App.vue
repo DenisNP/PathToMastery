@@ -42,6 +42,9 @@ export default {
             else this.$f7.preloader.hide();
         },
     },
+    mounted() {
+        window.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+    },
 };
 </script>
 

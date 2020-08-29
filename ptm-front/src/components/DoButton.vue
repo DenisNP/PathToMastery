@@ -1,31 +1,104 @@
 <template>
-    <div class="relative" @click="edit">
+    <div class="relative" @touchstart="mousedown" @touchend="mouseup" @touchcancel="mouseup">
         <div class="btn-color" :style="`background: ${gradient};`"/>
         <div class="icon-frame"/>
-        <div class="icon" :class="{'fill-icon': !data.icon}">{{data.icon || '➕'}}</div>
+        <div class="icon" :class="{'fill-icon': !data.data.icon}">{{data.data.icon || '➕'}}</div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'DoButton',
+    data() {
+        return {
+            timer: 0,
+            awaitClick: false,
+            touchStartTime: 0,
+            progress: 0,
+            interval: 0,
+            waitTime: 2000,
+        };
+    },
     computed: {
         color() {
-            return this.$store.state.colors[Math.max(0, this.data.color - 1)];
+            return this.$store.state.colors[Math.max(0, this.data.data.color - 1)];
         },
         gradient() {
             return `linear-gradient(10deg, ${this.color[1]} 0%, ${this.color[2]} 100%)`;
         },
     },
     methods: {
-        edit() {
-            console.log(111);
-            this.$emit('double-tap');
+        mousedown() {
+            this.touchStartTime = 0;
+            clearInterval(this.interval);
+            this.progress = 0;
+            if (!this.active) {
+                this.$emit('activate');
+            } else {
+                this.touchStartTime = (new Date()).getTime();
+                this.interval = setInterval(this.calculateProgress, 10);
+            }
+        },
+        mouseup() {
+            if (this.active) {
+                const diff = (new Date()).getTime() - this.touchStartTime;
+                this.touchStartTime = 0;
+                clearInterval(this.interval);
+                if (diff < this.waitTime) {
+                    this.touchStartTime = 0;
+                    this.progress = 0;
+                    this.timer = 0;
+                    this.clicked();
+                } else if (this.data.canBeDone) {
+                    this.setDone();
+                }
+            }
+        },
+        clicked() {
+            if (this.awaitClick) {
+                this.awaitClick = false;
+                clearTimeout(this.timer);
+                this.timer = 0;
+                this.touchStartTime = 0;
+                this.clickedDouble();
+            } else {
+                this.awaitClick = true;
+                this.timer = setTimeout(() => this.clickedOnce(), 250);
+            }
+        },
+        clickedOnce() {
+            this.awaitClick = false;
+            this.touchStartTime = 0;
+            this.timer = 0;
+            if (this.data.data.name) {
+                // this.showToast();
+            } else {
+                this.$emit('edit');
+            }
+        },
+        clickedDouble() {
+            this.$emit('edit');
+        },
+        calculateProgress() {
+            this.progress = ((new Date()).getTime() - this.touchStartTime) / this.waitTime;
+            if (this.progress >= 1) {
+                this.setDone();
+            }
+        },
+        setDone() {
+            this.touchStartTime = 0;
+            clearInterval(this.interval);
+            this.progress = 0;
+            this.$emit('done');
         },
     },
     props: {
         data: {
             type: Object,
+            required: true,
+        },
+        active: {
+            type: Boolean,
             required: true,
         },
     },
