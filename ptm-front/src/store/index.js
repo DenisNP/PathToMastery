@@ -5,11 +5,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        isLoading: true,
     },
-    mutations: {
-    },
-    actions: {
-    },
-    modules: {
-    },
+    mutations: {},
+    actions: {},
 });

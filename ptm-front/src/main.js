@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import App from './App.vue';
 import store from './store';
+import 'tachyons';
 
 Vue.config.productionTip = false;
 
