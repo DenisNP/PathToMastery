@@ -9,6 +9,15 @@ export default new Vuex.Store({
         isLoading: true,
         calendarSelected: 2,
         currentMonth: 8,
+        colors: [
+            ['#222121', '#29323C', '#485563'],
+            ['#FF1F47', '#FF0844', '#FFB199'],
+            ['#85878B', '#78787A', '#BDBBBE'],
+            ['#3D4EB8', '#4250A7', '#6B7CE8'],
+            ['#48B6AD', '#48BDB7', '#85D8D3'],
+            ['#0C74D5', '#3780D7', '#45A6FF'],
+            ['#FFA800', '#FDA085', '#F6D365'],
+        ],
         user: {
             id: '463377',
         },
@@ -17,7 +26,7 @@ export default new Vuex.Store({
             data: {
                 name: 'ABC',
                 icon: '😘',
-                color: 1,
+                color: 2,
                 days: [
                     2,
                     4,
@@ -1620,7 +1629,7 @@ export default new Vuex.Store({
             data: {
                 name: '',
                 icon: '',
-                color: 0,
+                color: 1,
                 days: [],
                 done: [],
             },
