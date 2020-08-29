@@ -51,14 +51,22 @@ html,
 body {
     position: fixed;
     overflow: hidden;
+    background-color: #E5E5E5;
 }
 
-:root {
+:root, :root.theme-dark, :root .theme-dark {
     --f7-theme-color: #222121;
     --f7-theme-color-rgb: 34, 33, 33;
     --f7-theme-color-shade: #0d0d0d;
     --f7-theme-color-tint: #373535;
     --f7-navbar-height: 52px;
+    --f7-bars-bg-color: #FBFBFB;
+    --f7-bars-bg-color-rgb: rgb(251, 251, 251);
+    --f7-navbar-bg-color: #FBFBFB;
+    --f7-navbar-bg-color-rgb: rgb(251, 251, 251);
+    --f7-bars-translucent-opacity: 1.0;
+    --f7-bars-border-color: transparent;
+    --f7-page-bg-color: #FBFBFB;
 }
 
 @font-face {
