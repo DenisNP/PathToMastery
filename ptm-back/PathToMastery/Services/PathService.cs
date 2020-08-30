@@ -184,7 +184,7 @@ namespace PathToMastery.Services
             int notify
         )
         {
-            if (name.Length == 0 || name.Length > 140) throw new ArgumentException("Name length is invalid");
+            if (name.Length == 0 || name.Length > 30) throw new ArgumentException("Name length is invalid");
             if (!_emojiPattern.IsMatch(icon)) throw new ArgumentException("Icon is not an emoji");
             if (color <= 0 || color > MaxColorId) throw new ArgumentException("Color is invalid");
             foreach (var day in days)

@@ -11,13 +11,14 @@
                 :key="`${w[0].d}_${w[0].m}_${w[0].y}`"
                 :days="w"
                 :data="data"
+                @milestone="(d) => $emit('milestone', d)"
             />
         </div>
     </div>
 </template>
 
 <script>
-import { chunk } from '@/common/utils';
+import { chunk, isCurrentDay } from '@/common/utils';
 import Week from '@/components/Week.vue';
 
 const weeksToCheck = 6;
@@ -54,15 +55,9 @@ export default {
             }
         },
         setScroll() {
-            const now = new Date();
-            const currentWeekIdx = this.weeks
-                .findIndex(
-                    (w) => w.some(
-                        (d) => d.d === now.getDate()
-                            && d.m === now.getMonth() + 1
-                            && d.y === now.getFullYear(),
-                    ),
-                );
+            const currentWeekIdx = this.weeks.findIndex(
+                (w) => w.some((d) => isCurrentDay(d)),
+            );
 
             const weekToScroll = Math.max(0, currentWeekIdx - 2);
             this.$nextTick(() => {

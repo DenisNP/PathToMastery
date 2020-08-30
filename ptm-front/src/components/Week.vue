@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { getNumericPhrase } from '@/common/utils';
+import { isCurrentDay } from '@/common/utils';
 
 export default {
     name: 'Week',
@@ -68,20 +68,14 @@ export default {
     },
     methods: {
         isCurrent(d) {
-            const now = new Date();
-            return now.getDate() === d.d && now.getMonth() + 1 === d.m && now.getFullYear() === d.y;
+            return isCurrentDay(d);
         },
         showDay(d) {
-            if (d.type === 'Checkpoint') {
+            if (d.msD > 0) {
+                this.$emit('milestone', d);
+            } else if (d.type === 'Checkpoint') {
                 this.$f7.toast.create({
                     text: 'В этот день будет следующий шаг на данном Пути',
-                    position: 'center',
-                    cssClass: 'my-text-center',
-                    closeTimeout: 2000,
-                }).open();
-            } else if (d.msD > 0) {
-                this.$f7.toast.create({
-                    text: `<b>Веха на Пути</b><br/><br/>${d.msD} ${getNumericPhrase(d.msD, 'день', 'дня', 'дней')}`,
                     position: 'center',
                     cssClass: 'my-text-center',
                     closeTimeout: 2000,

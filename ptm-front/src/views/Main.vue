@@ -3,7 +3,7 @@
         <f7-navbar>
             <img src="../assets/logo.svg" class="logo-image ml3" slot="left">
         </f7-navbar>
-        <calendar/>
+        <calendar @milestone="milestone"/>
         <div class="w-100 mt4 relative">
             <div class="buttons-block ml-auto mr-auto">
                 <do-button
@@ -50,24 +50,46 @@
                 />
             </div>
         </div>
-<!--        <f7-sheet-->
-<!--            style="&#45;&#45;f7-sheet-bg-color: #fff;"-->
-<!--            swipe-to-close-->
-<!--            backdrop-->
-<!--        >-->
-<!--            <div>-->
-<!--                <div>Веха на Пути</div>-->
-<!--            </div>-->
-<!--        </f7-sheet>-->
+        <f7-sheet
+            style="--f7-sheet-bg-color: #fff;"
+            swipe-to-close
+            backdrop
+            :opened="sheetOpened"
+            @sheet:close="sheetOpened = false"
+        >
+            <div class="flex flex-column justify-center items-center">
+                <div class="tc f3 mv2">Веха на Пути</div>
+                <img class="sticker-img mt1" :src="stickerImage"/>
+                <div class="mt3 mb2 f6 text-color-gray tc mh5">
+                    {{milestoneStory
+                        ? 'Запишите Историю и расскажите друзьям о ваших успехах!'
+                        : 'Важная веха на вашем Пути. Продолжайте непрерывно выполнять задание, ' +
+                            'чтобы дойти до неё.'}}
+                </div>
+                <f7-button @click="createStory" v-show="milestoneStory" fill>
+                    Создать историю
+                </f7-button>
+            </div>
+        </f7-sheet>
     </f7-page>
 </template>
 
 <script>
+import VKC from '@denisnp/vkui-connect-helper';
 import Calendar from '@/components/Calendar.vue';
 import DoButton from '@/components/DoButton.vue';
+import { createStory, generateSticker } from '@/common/storyCreator';
 
 export default {
     name: 'Main',
+    data() {
+        return {
+            sheetOpened: false,
+            stickerImage: '',
+            milestoneStory: false,
+            milestoneDay: null,
+        };
+    },
     computed: {
         current() {
             return this.$store.state.calendarSelected;
@@ -91,12 +113,31 @@ export default {
                 cssClass: 'my-text-center',
                 closeTimeout: 2500,
             }).open();
+
+            VKC.bridge().send('VKWebAppTapticNotificationOccurred', { type: 'warning' });
         },
         done(id) {
             this.$store.dispatch('api', {
                 method: 'done',
                 data: { id },
             });
+
+            VKC.bridge().send('VKWebAppTapticNotificationOccurred', { type: 'success' });
+        },
+        async milestone(d) {
+            this.sheetOpened = true;
+            this.milestoneDay = d;
+            this.stickerImage = await generateSticker(d, this.$store.getters.calendar.data.name);
+            this.milestoneStory = d.type === 'Done'
+                || d.type === 'DoneBreak'
+                || d.type === 'DoneLink';
+        },
+        async createStory() {
+            const data = await createStory(
+                this.milestoneDay,
+                this.$store.getters.calendar.data.name,
+            );
+            VKC.send('VKWebAppShowStoryBox', data);
         },
     },
     components: { DoButton, Calendar },
@@ -104,36 +145,43 @@ export default {
 </script>
 
 <style scoped>
-.logo-image {
-    height: 26px;
-}
+    .logo-image {
+        height: 26px;
+    }
 
-.buttons-block {
-    overflow: visible;
-    position: absolute;
-    left: 50vw;
-}
+    .buttons-block {
+        overflow: visible;
+        position: absolute;
+        left: 50vw;
+    }
 
-.btn {
-    position: absolute;
-    transition: transform, left, opacity, z-index;
-    transition-duration: 0.4s;
-}
+    .btn {
+        position: absolute;
+        transition: transform, left, opacity, z-index;
+        transition-duration: 0.4s;
+    }
 
-.btn-left {
-    left: -106px;
-    transform: scale(0.9);
-    opacity: 0.4;
-}
+    .btn-left {
+        left: -106px;
+        transform: scale(0.9);
+        opacity: 0.4;
+    }
 
-.btn-main {
-    left: -42px;
-    z-index: 1;
-}
+    .btn-main {
+        left: -42px;
+        z-index: 1;
+    }
 
-.btn-right {
-    left: 22px;
-    transform: scale(0.9);
-    opacity: 0.4;
-}
+    .btn-right {
+        left: 22px;
+        transform: scale(0.9);
+        opacity: 0.4;
+    }
+
+    .sticker-img {
+        width: 250px;
+        height: 100px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
 </style>

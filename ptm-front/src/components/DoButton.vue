@@ -20,6 +20,7 @@ export default {
             progress: 0,
             interval: 0,
             waitTime: 2000,
+            disableMouseUp: false,
         };
     },
     computed: {
@@ -41,6 +42,7 @@ export default {
             }
         },
         mouseup() {
+            if (this.disableMouseUp) return;
             if (this.active) {
                 const diff = this.touchStartTime === 0
                     ? 0
@@ -91,10 +93,14 @@ export default {
             }
         },
         setDone() {
+            this.disableMouseUp = true;
             this.touchStartTime = 0;
             clearInterval(this.interval);
             this.progress = 0;
             this.$emit('done');
+            setTimeout(() => {
+                this.disableMouseUp = false;
+            }, 2000);
         },
     },
     props: {

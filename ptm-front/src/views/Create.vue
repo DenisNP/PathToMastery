@@ -10,7 +10,7 @@
                 @input="name = $event.target.value"
                 type="text"
                 placeholder="Делать зарядку каждый день"
-                maxlength="140"
+                maxlength="30"
                 minlength="1"
                 clear-button
             />

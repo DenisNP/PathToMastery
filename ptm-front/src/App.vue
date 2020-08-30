@@ -88,6 +88,10 @@ body {
     text-align: center;
 }
 
+.sheet-modal {
+    border-radius: 20px 20px 0 0;
+}
+
 .ios-translucent-bars .navbar-bg {
     background-color: var(--f7-navbar-bg-color)!important;
 }

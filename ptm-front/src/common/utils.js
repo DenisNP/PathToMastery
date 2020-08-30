@@ -65,6 +65,11 @@ export const chunk = (arr, len) => {
     return chunks;
 };
 
+export const isCurrentDay = (d) => {
+    const now = new Date();
+    return now.getDate() === d.d && now.getMonth() + 1 === d.m && now.getFullYear() === d.y;
+};
+
 export const getNumericPhrase = (num, one, few, many) => {
     // eslint-disable-next-line no-param-reassign
     num = Number(num) < 0 ? 0 : Number(num);
