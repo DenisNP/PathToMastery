@@ -79,6 +79,7 @@ import VKC from '@denisnp/vkui-connect-helper';
 import Calendar from '@/components/Calendar.vue';
 import DoButton from '@/components/DoButton.vue';
 import { createStory, generateSticker } from '@/common/storyCreator';
+import { isCurrentDay } from '@/common/utils';
 
 export default {
     name: 'Main',
@@ -116,13 +117,23 @@ export default {
 
             VKC.bridge().send('VKWebAppTapticNotificationOccurred', { type: 'warning' });
         },
-        done(id) {
-            this.$store.dispatch('api', {
+        async done(id) {
+            await this.$store.dispatch('api', {
                 method: 'done',
                 data: { id },
             });
 
             VKC.bridge().send('VKWebAppTapticNotificationOccurred', { type: 'success' });
+
+            const today = this.$store.getters.calendar.days.find((d) => isCurrentDay(d));
+            if (today
+                && (
+                    today.type === 'Done'
+                    || today.type === 'DoneBreak'
+                    || today.type === 'DoneLink'
+                )) {
+                this.milestone(today);
+            }
         },
         async milestone(d) {
             this.sheetOpened = true;
