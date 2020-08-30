@@ -9,7 +9,7 @@ namespace PathToMastery.Models
         [JsonIgnore]
         public long NotifyTime { get; set; }
         [JsonIgnore]
-        public string NotifyMessage { get; set; }
+        public int NotifyPathId { get; set; }
         
         [JsonIgnore]
         public PathData First { get; set; }

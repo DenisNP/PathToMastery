@@ -461,9 +461,9 @@ namespace PathToMastery.Services
             if (user.NotifyTime == earliest) return false;
             
             user.NotifyTime = earliest;
-            user.NotifyMessage = best != null
-                ? $"Время сделать шаг по пути \"{best.Name}\""
-                : "";
+            user.NotifyPathId = best != null
+                ? Array.IndexOf(paths, best) + 1
+                : 0;
             
             return true;
         }
