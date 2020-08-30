@@ -19,12 +19,10 @@
                 </svg>
             </div>
             <div
-                v-if="d.type === 'Checkpoint'
-                    || d.type === 'DoneLink'
+                v-if="d.type === 'DoneLink'
                     || d.type === 'Done'
                     || d.type === 'DoneBreak'"
                 class="point"
-                :class="{'o-40': d.type === 'Checkpoint'}"
                 :style="`color: ${color};`"
             >
                 <svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
@@ -32,6 +30,11 @@
                     <rect y="4.94975" width="7" height="7" rx="2" transform="rotate(-45 0 4.94975)"/>
                 </svg>
             </div>
+            <div
+                class="checkpoint"
+                v-if="d.type === 'Checkpoint'"
+                :style="`background-color: ${color};`"
+            />
             <div
                 v-if="d.type === 'Break'"
                 class="break"
@@ -114,11 +117,11 @@ export default {
 
     .point {
         position: absolute;
-        bottom: 6px;
-        left: calc(50% - 4px);
+        bottom: 3px;
+        left: calc(50% - 6px);
         fill: currentColor;
-        width: 11px;
-        height: 11px;
+        width: 13px;
+        height: 13px;
     }
 
     .point > svg {
@@ -153,5 +156,14 @@ export default {
     .milestone > svg {
         width: 100%;
         height: 100%;
+    }
+
+    .checkpoint {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        left: calc(50% - 3px);
+        bottom: 2px;
     }
 </style>
