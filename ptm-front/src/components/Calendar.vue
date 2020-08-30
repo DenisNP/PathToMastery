@@ -102,7 +102,8 @@ export default {
 <style scoped>
     .cal-sheet {
         width: 100%;
-        height: calc(100vh - 300px);
+        /*noinspection CssInvalidFunction*/
+        height: calc(100vh - 300px - env(safe-area-inset-bottom));
     }
 
     .empty-placeholder {

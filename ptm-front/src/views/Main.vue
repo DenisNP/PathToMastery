@@ -127,6 +127,7 @@ export default {
 
             const today = this.$store.getters.calendar.days.find((d) => isCurrentDay(d));
             if (today
+                && today.msD > 0
                 && (
                     today.type === 'Done'
                     || today.type === 'DoneBreak'
@@ -190,8 +191,8 @@ export default {
     }
 
     .sticker-img {
-        width: 250px;
-        height: 100px;
+        width: 225px;
+        height: 90px;
         border-radius: 10px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     }

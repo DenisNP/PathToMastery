@@ -70,7 +70,11 @@
         <f7-list no-hairlines-md style="margin: 0;">
             <f7-list-item>
                 <span>Включить уведомления</span>
-                <f7-toggle :checked="notifyEnable" @change="enableNotify"/>
+                <f7-toggle
+                    :checked="notifyEnable"
+                    ref="notifyToggle"
+                    @toggle:change="enableNotify"
+                />
             </f7-list-item>
             <f7-list-input
                 label="Когда уведомлять"
@@ -157,8 +161,10 @@ export default {
                 const [enabled] = await VKC.send('VKWebAppAllowNotifications');
                 if (!enabled) {
                     this.notifyEnable = false;
+                    this.$refs.notifyToggle.toggle();
                     return;
                 }
+                this.$store.commit('setNotifications', true);
             }
             this.notifyEnable = enable;
         },
