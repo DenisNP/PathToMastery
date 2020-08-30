@@ -451,7 +451,7 @@ namespace PathToMastery.Services
             var paths = new[] {user.First, user.Second, user.Third};
             
             PathData best = null;
-            long earliest = 0;
+            long earliest = long.MaxValue;
             foreach (var pathData in paths)
             {
                 var notifyTime = NextNotify(pathData, offset);
@@ -462,12 +462,11 @@ namespace PathToMastery.Services
                 }
             }
 
+            if (earliest == long.MaxValue) earliest = 0;
             if (user.NotifyTime == earliest) return false;
             
             user.NotifyTime = earliest;
-            user.NotifyPathId = best != null
-                ? Array.IndexOf(paths, best) + 1
-                : 0;
+            user.NotifyPathId = best != null ? Array.IndexOf(paths, best) + 1 : 0;
             
             return true;
         }
