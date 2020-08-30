@@ -424,7 +424,7 @@ namespace PathToMastery.Services
             return d + TimeSpan.FromDays(diff);
         }
 
-        private PathData PathFromId(User user, int id)
+        public PathData PathFromId(User user, int id)
         {
             return id switch
             {
@@ -446,7 +446,7 @@ namespace PathToMastery.Services
             return (h, m);
         }
 
-        private bool SetNextNotify(User user, int offset)
+        public bool SetNextNotify(User user, int offset)
         {
             var paths = new[] {user.First, user.Second, user.Third};
             

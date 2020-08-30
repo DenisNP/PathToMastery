@@ -20,7 +20,7 @@ namespace PathToMastery
             services.AddSingleton<ISocialService, VkService>();
             services.AddSingleton<PathService>();
 
-            // services.AddHostedService<CheckDuelsService>();
+            services.AddHostedService<NotificationService>();
         }
 
         public void Configure(IApplicationBuilder app, IDbService dbService)
