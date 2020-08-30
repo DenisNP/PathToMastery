@@ -73,7 +73,7 @@
                 <f7-toggle
                     :checked="notifyEnable"
                     ref="notifyToggle"
-                    @toggle:change="enableNotify"
+                    @change="enableNotify"
                 />
             </f7-list-item>
             <f7-list-input
