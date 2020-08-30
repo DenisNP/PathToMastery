@@ -1,7 +1,11 @@
 <template>
     <div>
         <div class="c-font f4 tc pv3">{{monthName}}</div>
-        <div class="cal-sheet overflow-y-scroll overflow-x-hidden" @scroll="calendarScroll">
+        <div
+            class="cal-sheet overflow-y-scroll overflow-x-hidden"
+            @scroll="calendarScroll"
+            ref="calendarSheet"
+        >
             <week
                 v-for="w in weeks"
                 :key="`${w[0].d}_${w[0].m}_${w[0].y}`"
@@ -16,13 +20,14 @@
 import { chunk } from '@/common/utils';
 import Week from '@/components/Week.vue';
 
+const weeksToCheck = 6;
+const weekHeight = 54;
+
 export default {
     name: 'Calendar',
     components: { Week },
     methods: {
         calendarScroll(e) {
-            const weeksToCheck = 6;
-            const weekHeight = 54;
             let skipWeeks = Math.round(e.target.scrollTop / weekHeight);
             if (this.weeks.length < skipWeeks + weeksToCheck) {
                 skipWeeks = this.weeks.length - weeksToCheck;
@@ -60,6 +65,22 @@ export default {
         data() {
             return this.$store.getters.calendar.data;
         },
+    },
+    mounted() {
+        const now = new Date();
+        const currentWeekIdx = this.weeks
+            .findIndex(
+                (w) => w.some(
+                    (d) => d.d === now.getDate()
+                        && d.m === now.getMonth() + 1
+                        && d.y === now.getFullYear(),
+                ),
+            );
+
+        const weekToScroll = Math.max(0, currentWeekIdx - 2);
+        this.$nextTick(() => {
+            this.$refs.calendarSheet.scrollTop = weekHeight * weekToScroll;
+        });
     },
 };
 </script>

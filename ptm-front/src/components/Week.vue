@@ -4,7 +4,7 @@
             v-for="d in days"
             :key="d.dow"
             class="tc width-100 pv3 f5 relative"
-            :class="{'o-40': d.m !== $store.state.currentMonth}"
+            :class="{'o-40': d.m !== $store.state.currentMonth, 'fw7': isCurrent(d)}"
         >
             {{d.d}}
             <div
@@ -62,6 +62,12 @@ export default {
     computed: {
         color() {
             return this.$store.state.colors[this.data.color - 1][0];
+        },
+    },
+    methods: {
+        isCurrent(d) {
+            const now = new Date();
+            return now.getDate() === d.d && now.getMonth() + 1 === d.m && now.getFullYear() === d.y;
         },
     },
     props: {
