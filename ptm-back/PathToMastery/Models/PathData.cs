@@ -8,6 +8,7 @@ namespace PathToMastery.Models
         public string Icon { get; set; } = "";
         public int Color { get; set; } = 0;
         public int[] Days { get; set; } = new int[0];
+        public int Notify { get; set; }
         public List<DayMeta> Done { get; set; } = new List<DayMeta>();
 
         public void Clear()

@@ -126,11 +126,15 @@ namespace PathToMastery.Services
                     Third = new PathData()
                 };
                 _dbService.UpdateAsync(user);
+            } 
+            else if (SetNextNotify(user, offset))
+            {
+                _dbService.UpdateAsync(user);
             }
-            return LoadUser(user, offset);
+            return GenerateState(user, offset);
         }
 
-        private State LoadUser(User user, int offset)
+        private State GenerateState(User user, int offset)
         {
             return new State
             {
@@ -141,13 +145,14 @@ namespace PathToMastery.Services
             };
         }
 
-        public State CreateEditPath(string userId, int id, string name, string icon, int color, int[] days, int offset)
+        public State CreateEditPath(string userId, int id, string name, string icon, int color, int[] days, int notify, int offset)
         {
             var user = _dbService.ById<User>(userId, false);
-            CreateEditPath(PathFromId(user, id), name, icon, color, days);
-            
+            CreateEditPath(PathFromId(user, id), name, icon, color, days, notify);
+
+            SetNextNotify(user, offset);
             _dbService.UpdateAsync(user);
-            return LoadUser(user, offset); 
+            return GenerateState(user, offset); 
         }
 
         public State DeletePath(string userId, int id, int offset)
@@ -155,8 +160,9 @@ namespace PathToMastery.Services
             var user = _dbService.ById<User>(userId, false);
             PathFromId(user, id).Clear();
             
+            SetNextNotify(user, offset);
             _dbService.UpdateAsync(user);
-            return LoadUser(user, offset); 
+            return GenerateState(user, offset); 
         }
 
         public State SetDone(string userId, int id, int offset)
@@ -164,8 +170,9 @@ namespace PathToMastery.Services
             var user = _dbService.ById<User>(userId, false);
             SetDone(PathFromId(user, id), offset);
             
+            SetNextNotify(user, offset);
             _dbService.UpdateAsync(user);
-            return LoadUser(user, offset); 
+            return GenerateState(user, offset); 
         }
 
         private void CreateEditPath(
@@ -173,7 +180,8 @@ namespace PathToMastery.Services
             string name,
             string icon,
             int color,
-            int[] days
+            int[] days,
+            int notify
         )
         {
             if (name.Length == 0 || name.Length > 140) throw new ArgumentException("Name length is invalid");
@@ -182,6 +190,16 @@ namespace PathToMastery.Services
             foreach (var day in days)
             {
                 if (day < 1 || day > 7) throw new ArgumentException($"Day {day} is invalid");
+            }
+            
+            if (notify < 0)
+            {
+                data.Notify = -1;
+            }
+            else
+            {
+                UnpackTime(notify);
+                data.Notify = notify;
             }
 
             data.Name = name;
@@ -343,9 +361,7 @@ namespace PathToMastery.Services
                     var done = data.Done[nextDoneIndex];
 
                     // see next checkpoint day from current date
-                    var nextDays = data.Days.SkipWhile(x => x < dow).ToList();
-                    var nextDay = nextDays.Count > 0 ? nextDays.First() : data.Days.First();
-                    var nextCheckpoint = ToClosestUp(date, nextDay);
+                    var nextCheckpoint = GetNextCheckpointFor(data, date, dow);
 
                     var isNextDone = done.IsDayOf(nextCheckpoint);
                     if (isNextDone) type = DateType.Link;
@@ -368,6 +384,13 @@ namespace PathToMastery.Services
             return path;
         }
 
+        private DateTimeOffset GetNextCheckpointFor(PathData data, DateTimeOffset date, int dow, bool forceStrictLater = false)
+        {
+            var nextDays = data.Days.SkipWhile(x => x < dow).ToList();
+            var nextDay = nextDays.Count > 0 ? nextDays.First() : data.Days.First();
+            return ToClosestUp(date, nextDay, forceStrictLater);
+        }
+
         private int FindMilestoneDays(PathData data, DateTimeOffset date, DateTimeOffset earliestLink)
         {
             var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays) + 1;
@@ -375,13 +398,13 @@ namespace PathToMastery.Services
             return milestone == null ? 0 : daysFromStart;
         }
 
-        private DateTimeOffset ToClosestUp(DateTimeOffset d, int dayOfWeek)
+        private DateTimeOffset ToClosestUp(DateTimeOffset d, int dayOfWeek, bool forceStrictLater = false)
         {
             var currentDow = (int)d.DayOfWeek;
             if (currentDow == 0) currentDow = 7;
 
             var diff = dayOfWeek - currentDow;
-            if (diff < 0) diff += 7;
+            if (diff < 0 || diff == 0 && forceStrictLater) diff += 7;
 
             return d + TimeSpan.FromDays(diff);
         }
@@ -406,6 +429,67 @@ namespace PathToMastery.Services
                 3 => user.Third,
                 _ => throw new ArgumentOutOfRangeException(nameof(id), $"No path with id = {id}")
             };
+        }
+
+        private (int h, int m) UnpackTime(int time)
+        {
+            var h = (int)Math.Floor(time * 1.0 / 100.0);
+            if (h < 0 || h > 23) throw new ArgumentException($"Invalid hours: {time} > {h}");
+
+            var m = time - h * 100;
+            if (m < 0 || m > 59) throw new ArgumentException($"Invalid minutes {time} > {m}");
+
+            return (h, m);
+        }
+
+        private bool SetNextNotify(User user, int offset)
+        {
+            var paths = new[] {user.First, user.Second, user.Third};
+            
+            PathData best = null;
+            long earliest = 0;
+            foreach (var pathData in paths)
+            {
+                var notifyTime = NextNotify(pathData, offset);
+                if (notifyTime > 0 && notifyTime < earliest)
+                {
+                    earliest = notifyTime;
+                    best = pathData;
+                }
+            }
+
+            if (user.NotifyTime == earliest) return false;
+            
+            user.NotifyTime = earliest;
+            user.NotifyMessage = best != null
+                ? $"Время сделать шаг по пути \"{best.Name}\""
+                : "";
+            
+            return true;
+        }
+
+        private long NextNotify(PathData data, int offset)
+        {
+            if (data.Notify < 0 || string.IsNullOrEmpty(data.Name)) return 0;
+            var (h, m) = UnpackTime(data.Notify);
+            var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
+            var dow = (int) now.DayOfWeek;
+
+            DateTimeOffset notifyDate;
+            var notifyTime = new TimeSpan(h, m, 0);
+            if (data.Days.Contains(dow) && notifyTime > now.TimeOfDay)
+            {
+                // notify today but later
+                notifyDate = now - now.TimeOfDay + notifyTime;
+            }
+            else
+            {
+                // notify on next checkpoint day
+                var nextCheckpoint = GetNextCheckpointFor(data, now, dow, true);
+                notifyDate = nextCheckpoint - nextCheckpoint.TimeOfDay + notifyTime;
+            }
+
+            return notifyDate.ToUnixTimeMilliseconds();
         }
     }
 }

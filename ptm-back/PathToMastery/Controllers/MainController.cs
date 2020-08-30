@@ -58,7 +58,7 @@ namespace PathToMastery.Controllers
             return HandleRequest<CreateRequest, StateResponse>(
                 req =>
                     new StateResponse(
-                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Offset)
+                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Notify, req.Offset)
                     )
             );
         }
@@ -69,7 +69,7 @@ namespace PathToMastery.Controllers
             return HandleRequest<CreateRequest, StateResponse>(
                 req =>
                     new StateResponse(
-                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Offset)
+                        _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Notify, req.Offset)
                     )
             );
         }
