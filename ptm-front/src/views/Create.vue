@@ -80,7 +80,6 @@
                 :value="notifyTime"
             />
         </f7-list>
-        <div class="w-100 splitter"/>
         <f7-button :disabled="this.days.length === 0" class="big-btn" large fill>
             Сохранить
         </f7-button>
@@ -193,6 +192,16 @@ export default {
 };
 </script>
 
+<style>
+    .ios .day-btn {
+        padding-top: 5px;
+    }
+
+    .md .day-btn {
+        padding-top: 2px;
+    }
+</style>
+
 <style scoped>
     .c-circle {
         width: 40px;
@@ -227,7 +236,6 @@ export default {
         height: 11vw;
         text-transform: none;
         text-overflow: inherit;
-        padding-top: 5px;
     }
 
     .day-btn-inactive {

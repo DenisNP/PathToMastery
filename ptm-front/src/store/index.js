@@ -2439,6 +2439,9 @@ export default new Vuex.Store({
         setNotifications(state, n) {
             state.notifications = n;
         },
+        setCurrentMonth(state, m) {
+            state.currentMonth = m;
+        },
     },
     actions: {},
 });

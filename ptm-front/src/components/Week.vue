@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-around ph2">
+    <div class="flex justify-around ph2" ref="weekDiv">
         <div
             v-for="d in days"
             :key="d.dow"

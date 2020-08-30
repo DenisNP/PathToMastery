@@ -1,8 +1,13 @@
 <template>
     <div>
         <div class="c-font f4 tc pv3">{{monthName}}</div>
-        <div class="cal-sheet overflow-y-scroll overflow-x-hidden">
-            <week v-for="w in weeks" :key="`${w[0].d}_${w[0].m}_${w[0].y}`" :days="w" :data="data"/>
+        <div class="cal-sheet overflow-y-scroll overflow-x-hidden" @scroll="calendarScroll">
+            <week
+                v-for="w in weeks"
+                :key="`${w[0].d}_${w[0].m}_${w[0].y}`"
+                :days="w"
+                :data="data"
+            />
         </div>
     </div>
 </template>
@@ -14,6 +19,36 @@ import Week from '@/components/Week.vue';
 export default {
     name: 'Calendar',
     components: { Week },
+    methods: {
+        calendarScroll(e) {
+            const weeksToCheck = 6;
+            const weekHeight = 54;
+            let skipWeeks = Math.round(e.target.scrollTop / weekHeight);
+            if (this.weeks.length < skipWeeks + weeksToCheck) {
+                skipWeeks = this.weeks.length - weeksToCheck;
+            }
+
+            const monthsCount = {};
+            for (let i = skipWeeks; i < skipWeeks + weeksToCheck; i++) {
+                const week = this.weeks[i];
+                week.forEach((d) => {
+                    const key = d.m.toString();
+                    if (!monthsCount[key]) monthsCount[key] = 1;
+                    else monthsCount[key] -= -1;
+                });
+            }
+
+            const countsArray = Object.entries(monthsCount);
+
+            countsArray.sort((a, b) => b[1] - a[1]);
+            if (countsArray.length === 0) return;
+
+            const month = Number.parseInt(countsArray[0][0], 10);
+            if (month !== this.$store.state.currentMonth) {
+                this.$store.commit('setCurrentMonth', month);
+            }
+        },
+    },
     computed: {
         monthName() {
             return this.$store.getters.monthName.toUpperCase();
