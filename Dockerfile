@@ -1,6 +1,6 @@
 # build client
 FROM node:12 as BUILD_CLIENT
-COPY ./pd-front /app
+COPY ./ptm-front /app
 WORKDIR /app
 RUN npm install
 RUN npm run build
@@ -8,7 +8,7 @@ RUN npm run build
 # build server
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1 as BUILD_SERVER
 WORKDIR /app
-COPY ./pd-back /app
+COPY ./ptm-back /app
 RUN dotnet restore
 RUN dotnet publish -c Release -o out
 
@@ -20,4 +20,4 @@ COPY --from=BUILD_CLIENT /app/dist /app/wwwroot
 
 # run
 EXPOSE 80
-ENTRYPOINT ["dotnet", "PhotoDuel.dll"]
+ENTRYPOINT ["dotnet", "PathToMastery.dll"]
