@@ -44,6 +44,7 @@ export default {
     },
     mounted() {
         window.addEventListener('contextmenu', (e) => { e.preventDefault(); });
+        this.$store.dispatch('init');
     },
 };
 </script>
@@ -81,6 +82,10 @@ body {
 .emoji-picker {
     --ep-color-bg: #FBFBFB!important;
     --ep-color-active: var(--f7-theme-color)!important;
+}
+
+.my-text-center {
+    text-align: center;
 }
 
 .ios-translucent-bars .navbar-bg {

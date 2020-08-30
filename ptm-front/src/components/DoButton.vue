@@ -5,6 +5,7 @@
         <div class="db-icon" :class="{'db-fill-icon': !data.data.icon}">
             {{data.data.icon || '➕'}}
         </div>
+        <div class="fill-disk" :style="`transform: scale(${progress});`"/>
     </div>
 </template>
 
@@ -34,26 +35,28 @@ export default {
             this.touchStartTime = 0;
             clearInterval(this.interval);
             this.progress = 0;
-            if (!this.active) {
-                this.$emit('activate');
-            } else {
+            if (this.active && this.data.canBeDone) {
                 this.touchStartTime = (new Date()).getTime();
                 this.interval = setInterval(this.calculateProgress, 10);
             }
         },
         mouseup() {
             if (this.active) {
-                const diff = (new Date()).getTime() - this.touchStartTime;
+                const diff = this.touchStartTime === 0
+                    ? 0
+                    : (new Date()).getTime() - this.touchStartTime;
+
                 this.touchStartTime = 0;
                 clearInterval(this.interval);
                 if (diff < this.waitTime) {
                     this.touchStartTime = 0;
                     this.progress = 0;
-                    this.timer = 0;
-                    this.clicked();
+                    if (diff < this.waitTime / 2 || !this.data.canBeDone) this.clicked();
                 } else if (this.data.canBeDone) {
-                    this.setDone();
+                    // this.setDone();
                 }
+            } else {
+                this.$emit('activate');
             }
         },
         clicked() {
@@ -73,7 +76,7 @@ export default {
             this.touchStartTime = 0;
             this.timer = 0;
             if (this.data.data.name) {
-                // this.showToast();
+                this.$emit('hint', this.data.canBeDone);
             } else {
                 this.$emit('edit');
             }
@@ -144,5 +147,16 @@ export default {
         color: transparent;
         text-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
         font-size: 18px;
+    }
+
+    .fill-disk {
+        position: absolute;
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        background: white;
+        top: 0;
+        left: 0;
+        opacity: 0.4;
     }
 </style>

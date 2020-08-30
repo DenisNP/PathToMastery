@@ -16,6 +16,8 @@
                     }"
                     @edit="edit(1)"
                     @activate="activate(1)"
+                    @hint="hint"
+                    @done="done(1)"
                     :active="current === 1"
                 />
                 <do-button
@@ -28,6 +30,8 @@
                     }"
                     @edit="edit(2)"
                     @activate="activate(2)"
+                    @hint="hint"
+                    @done="done(2)"
                     :active="current === 2"
                 />
                 <do-button
@@ -40,6 +44,8 @@
                     }"
                     @edit="edit(3)"
                     @activate="activate(3)"
+                    @hint="hint"
+                    @done="done(3)"
                     :active="current === 3"
                 />
             </div>
@@ -64,6 +70,24 @@ export default {
         },
         activate(num) {
             this.$store.commit('setSelected', num);
+        },
+        hint(canBeDone) {
+            const text = canBeDone
+                ? 'Долгое нажатие — отметиться.<br/><br/>Двойное нажатие — редактировать.'
+                : 'Сегодня нельзя отметиться на этом Пути.<br/><br/>Двойное нажатие — редактировать.';
+
+            this.$f7.toast.create({
+                text,
+                position: 'center',
+                cssClass: 'my-text-center',
+                closeTimeout: 2500,
+            }).open();
+        },
+        done(id) {
+            this.$store.dispatch('api', {
+                method: 'done',
+                data: { id },
+            });
         },
     },
     components: { DoButton, Calendar },

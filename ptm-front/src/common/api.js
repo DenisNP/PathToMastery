@@ -11,6 +11,7 @@ export default async (method, data) => {
     const request = {
         userId: getUserId(),
         sign: search.get('sign') || '',
+        offset: -Math.floor(new Date().getTimezoneOffset() / 60),
         params,
     };
 

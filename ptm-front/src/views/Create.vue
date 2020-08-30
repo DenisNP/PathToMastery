@@ -80,10 +80,16 @@
                 :value="notifyTime"
             />
         </f7-list>
-        <f7-button :disabled="this.days.length === 0" class="big-btn" large fill>
+        <f7-button
+            :disabled="this.days.length === 0 || !this.name"
+            class="big-btn"
+            large
+            fill
+            @click="savePath"
+        >
             Сохранить
         </f7-button>
-        <f7-button v-show="data.name" class="big-btn color-red" large outline>
+        <f7-button v-show="data.name" class="big-btn color-red" large outline @click="deletePath">
             Удалить путь
         </f7-button>
     </f7-page>
@@ -163,12 +169,58 @@ export default {
             this.notifyHour = Number.isNaN(h) ? 10 : h;
             this.notifyMinute = Number.isNaN(m) ? 0 : m;
         },
+        savePath() {
+            this.days.sort();
+            if (this.data.days.length > 0 && this.data.days.join('|') !== this.days.join('|')) {
+                this.$f7.dialog.confirm(
+                    'Редактирование дней выполнения Пути может сказаться на непрерывности вашего прогресса. Продолжить?',
+                    'Изменить путь',
+                    () => this.confirmEdit(),
+                );
+            } else {
+                this.confirmEdit();
+            }
+        },
+        async deletePath() {
+            this.$f7.dialog.confirm(
+                'Удаление Пути необратимо и сотрёт весь ваш прогресс по нему. Продолжить?',
+                'Удалить путь',
+                () => this.confirmDelete(),
+            );
+        },
+        async confirmEdit() {
+            const result = await this.$store.dispatch('api', {
+                method: 'create',
+                data: {
+                    id: this.pathId,
+                    color: this.color,
+                    name: this.name,
+                    icon: this.icon,
+                    notify: this.notifyEnable ? (this.notifyHour * 100 + this.notifyMinute) : -1,
+                    days: this.days,
+                },
+            });
+            if (result && result.state) {
+                this.$f7.views.main.router.back();
+            }
+        },
+        async confirmDelete() {
+            const result = await this.$store.dispatch('api', {
+                method: 'delete',
+                data: {
+                    id: this.pathId,
+                },
+            });
+            if (result && result.state) {
+                this.$f7.views.main.router.back();
+            }
+        },
     },
     mounted() {
         this.name = this.data.name;
         this.color = this.data.color || 1;
         this.icon = this.data.icon || '🚴🏻‍♂️';
-        this.days = this.data.days || [];
+        this.days = [...this.data.days] || [];
         if (this.data.notify < 0) {
             this.notifyHour = 10;
             this.notifyMinute = 0;

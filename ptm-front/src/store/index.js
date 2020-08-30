@@ -1,12 +1,18 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { months } from '@/common/utils';
+import VKC from '@denisnp/vkui-connect-helper';
+import {
+    getAppId, getPlatform, getSearch, isDev, months,
+} from '@/common/utils';
+import api from '@/common/api';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        isLoading: true,
+        isLoading: false,
+        noInternet: false,
+        showOnboarding: false,
         calendarSelected: 2,
         notifications: true,
         currentMonth: 8,
@@ -2442,6 +2448,66 @@ export default new Vuex.Store({
         setCurrentMonth(state, m) {
             state.currentMonth = m;
         },
+        setNoInternet(state, ni) {
+            state.noInternet = ni;
+        },
+        setLoading(state, l) {
+            state.isLoading = l;
+        },
+        setShowOnboarding(state, onb) {
+            state.showOnboarding = onb;
+        },
+        setState(state, s) {
+            state.user = s.user;
+            state.first = s.first;
+            state.second = s.second;
+            state.third = s.third;
+        },
     },
-    actions: {},
+    actions: {
+        async api({ commit }, { method, data, disableLoading }) {
+            if (!disableLoading) commit('setLoading', true);
+            const result = await api(method, data);
+            commit('setNoInternet', !result);
+            if (!disableLoading) commit('setLoading', false);
+            if (result && result.state) commit('setState', result.state);
+            return result;
+        },
+
+        async init({ commit, dispatch }) {
+            VKC.init({
+                appId: getAppId(),
+                accessToken: getPlatform() === 'local' ? process.env.VUE_APP_VK_DEV_TOKEN : '',
+                asyncStyle: true,
+                uploadProxy: isDev() ? 'http://localhost:5000/proxy' : '/proxy',
+                apiVersion: '5.120',
+            });
+
+            // set bar color
+            VKC.bridge().send(
+                'VKWebAppSetViewSettings',
+                { status_bar_style: 'dark', action_bar_color: '#FBFBFB' },
+            );
+
+            // notifications
+            const notifications = Number.parseInt(getSearch().get('vk_are_notifications_enabled'), 10) !== 0;
+            commit('setNotifications', notifications);
+
+            // onboarded
+            const [onb] = await VKC.send('VKWebAppStorageGet', { keys: ['onboarded'] });
+            if (onb && onb.keys) {
+                if (!onb.keys.some((k) => k.key === 'onboarded' && k.value)) {
+                    commit('setShowOnboarding', true);
+                }
+            }
+
+            // init
+            await dispatch('api', { method: 'init', data: {} });
+        },
+
+        saveOnboarding({ commit }) {
+            commit('setShowOnboarding', false);
+            VKC.send('VKWebAppStorageSet', { key: 'onboarded', value: '1' });
+        },
+    },
 });

@@ -53,6 +53,22 @@ export default {
                 this.$store.commit('setCurrentMonth', month);
             }
         },
+        setScroll() {
+            const now = new Date();
+            const currentWeekIdx = this.weeks
+                .findIndex(
+                    (w) => w.some(
+                        (d) => d.d === now.getDate()
+                            && d.m === now.getMonth() + 1
+                            && d.y === now.getFullYear(),
+                    ),
+                );
+
+            const weekToScroll = Math.max(0, currentWeekIdx - 2);
+            this.$nextTick(() => {
+                this.$refs.calendarSheet.scrollTop = weekHeight * weekToScroll;
+            });
+        },
     },
     computed: {
         monthName() {
@@ -65,22 +81,17 @@ export default {
         data() {
             return this.$store.getters.calendar.data;
         },
+        calendarSelected() {
+            return this.$store.state.calendarSelected;
+        },
+    },
+    watch: {
+        calendarSelected() {
+            this.setScroll();
+        },
     },
     mounted() {
-        const now = new Date();
-        const currentWeekIdx = this.weeks
-            .findIndex(
-                (w) => w.some(
-                    (d) => d.d === now.getDate()
-                        && d.m === now.getMonth() + 1
-                        && d.y === now.getFullYear(),
-                ),
-            );
-
-        const weekToScroll = Math.max(0, currentWeekIdx - 2);
-        this.$nextTick(() => {
-            this.$refs.calendarSheet.scrollTop = weekHeight * weekToScroll;
-        });
+        this.setScroll();
     },
 };
 </script>
