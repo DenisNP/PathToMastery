@@ -14,6 +14,11 @@
                 @milestone="(d) => $emit('milestone', d)"
             />
         </div>
+        <div class="empty-placeholder flex-column items-center content-center tc" v-if="!data.name">
+            <div class="f4 mt4">Новый Путь</div>
+            <div class="f6 mv4 mh4">Создайте новое занятие, которое будете отслеживать.</div>
+            <f7-button @click="createPath">Создать</f7-button>
+        </div>
     </div>
 </template>
 
@@ -64,6 +69,9 @@ export default {
                 this.$refs.calendarSheet.scrollTop = weekHeight * weekToScroll;
             });
         },
+        createPath() {
+            this.$f7.views.main.router.navigate(`create/${this.calendarSelected}`);
+        },
     },
     computed: {
         monthName() {
@@ -95,5 +103,18 @@ export default {
     .cal-sheet {
         width: 100%;
         height: calc(100vh - 300px);
+    }
+
+    .empty-placeholder {
+        width: 250px;
+        height: 250px;
+        position: absolute;
+        border: 1px solid #ddd;
+        background-color: white;
+        border-radius: 20px;
+        left: 50%;
+        top: calc(50% - 50px);
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     }
 </style>
