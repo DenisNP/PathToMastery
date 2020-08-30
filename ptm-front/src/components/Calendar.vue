@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="c-font f4 tc pv3">{{monthName}}</div>
-        <div class="cal-sheet overflow-scroll">
-            <week v-for="w in weeks" :key="`${w[0].d}_${w[0].m}_${w[0].y}`" :days="w"/>
+        <div class="cal-sheet overflow-y-scroll overflow-x-hidden">
+            <week v-for="w in weeks" :key="`${w[0].d}_${w[0].m}_${w[0].y}`" :days="w" :data="data"/>
         </div>
     </div>
 </template>
@@ -21,6 +21,9 @@ export default {
         weeks() {
             const { days } = this.$store.getters.calendar;
             return chunk(days, 7);
+        },
+        data() {
+            return this.$store.getters.calendar.data;
         },
     },
 };

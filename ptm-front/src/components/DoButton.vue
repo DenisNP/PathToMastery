@@ -1,8 +1,10 @@
 <template>
     <div class="relative" @touchstart="mousedown" @touchend="mouseup" @touchcancel="mouseup">
-        <div class="btn-color" :style="`background: ${gradient};`"/>
-        <div class="icon-frame"/>
-        <div class="icon" :class="{'fill-icon': !data.data.icon}">{{data.data.icon || '➕'}}</div>
+        <div class="db-color" :style="`background: ${gradient};`"/>
+        <div class="db-icon-frame"/>
+        <div class="db-icon" :class="{'db-fill-icon': !data.data.icon}">
+            {{data.data.icon || '➕'}}
+        </div>
     </div>
 </template>
 
@@ -105,15 +107,15 @@ export default {
 };
 </script>
 
-<style scoped>
-    .btn-color {
+<style>
+    .db-color {
         width: 84px;
         height: 84px;
         border-radius: 50%;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
     }
 
-    .icon-frame {
+    .db-icon-frame {
         position: absolute;
         width: 44px;
         height: 44px;
@@ -125,7 +127,7 @@ export default {
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
-    .icon {
+    .db-icon {
         position: absolute;
         width: 44px;
         height: 44px;
@@ -138,7 +140,7 @@ export default {
         /*opacity: 0.9;*/
     }
 
-    .fill-icon {
+    .db-fill-icon {
         color: transparent;
         text-shadow: 0 0 0 rgba(255, 255, 255, 0.4);
         font-size: 18px;

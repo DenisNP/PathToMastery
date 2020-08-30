@@ -75,6 +75,16 @@ body {
     --f7-bars-translucent-opacity: 1.0;
     --f7-bars-border-color: transparent;
     --f7-page-bg-color: #FBFBFB;
+    --f7-navbar-shadow-image: none;
+}
+
+.emoji-picker {
+    --ep-color-bg: #FBFBFB!important;
+    --ep-color-active: var(--f7-theme-color)!important;
+}
+
+.ios-translucent-bars .navbar-bg {
+    background-color: var(--f7-navbar-bg-color)!important;
 }
 
 @font-face {

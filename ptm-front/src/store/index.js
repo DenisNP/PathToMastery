@@ -8,6 +8,7 @@ export default new Vuex.Store({
     state: {
         isLoading: true,
         calendarSelected: 2,
+        notifications: true,
         currentMonth: 8,
         colors: [
             ['#222121', '#29323C', '#485563'],
@@ -25,12 +26,13 @@ export default new Vuex.Store({
             canBeDone: false,
             data: {
                 name: 'ABC',
-                icon: '😘',
+                icon: '🚴🏻‍♂️',
                 color: 2,
                 days: [
                     2,
                     4,
                 ],
+                notify: 0,
                 done: [],
             },
             days: [
@@ -816,7 +818,7 @@ export default new Vuex.Store({
             canBeDone: true,
             data: {
                 name: 'AAAABC',
-                icon: '😘',
+                icon: '🏃🏻‍♂️',
                 color: 1,
                 days: [
                     1,
@@ -827,6 +829,7 @@ export default new Vuex.Store({
                     6,
                     7,
                 ],
+                notify: 0,
                 done: [
                     {
                         d: 21,
@@ -844,7 +847,7 @@ export default new Vuex.Store({
                     m: 7,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneLink',
                 },
                 {
                     dow: 2,
@@ -852,7 +855,7 @@ export default new Vuex.Store({
                     m: 7,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'Link',
                 },
                 {
                     dow: 3,
@@ -860,7 +863,7 @@ export default new Vuex.Store({
                     m: 7,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneLink',
                 },
                 {
                     dow: 4,
@@ -868,7 +871,7 @@ export default new Vuex.Store({
                     m: 7,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'Link',
                 },
                 {
                     dow: 5,
@@ -876,7 +879,7 @@ export default new Vuex.Store({
                     m: 7,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneLink',
                 },
                 {
                     dow: 6,
@@ -884,7 +887,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneLink',
                 },
                 {
                     dow: 0,
@@ -892,7 +895,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneLink',
                 },
                 {
                     dow: 1,
@@ -908,7 +911,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneLink',
                 },
                 {
                     dow: 3,
@@ -916,7 +919,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'DoneBreak',
                 },
                 {
                     dow: 4,
@@ -940,7 +943,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'Checkpoint',
                 },
                 {
                     dow: 0,
@@ -948,7 +951,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 1,
@@ -956,7 +959,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 2,
@@ -964,7 +967,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 3,
@@ -972,7 +975,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 4,
@@ -980,7 +983,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 5,
@@ -988,7 +991,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 6,
@@ -996,7 +999,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 0,
@@ -1004,7 +1007,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 1,
@@ -1012,7 +1015,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 2,
@@ -1020,7 +1023,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 3,
@@ -1028,7 +1031,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 4,
@@ -1036,7 +1039,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 5,
@@ -1044,7 +1047,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Done',
+                    type: 'N',
                 },
                 {
                     dow: 6,
@@ -1052,7 +1055,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 0,
@@ -1060,7 +1063,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 1,
@@ -1068,7 +1071,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 2,
@@ -1076,7 +1079,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 3,
@@ -1084,7 +1087,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 4,
@@ -1092,7 +1095,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 5,
@@ -1100,7 +1103,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Break',
+                    type: 'N',
                 },
                 {
                     dow: 6,
@@ -1108,7 +1111,7 @@ export default new Vuex.Store({
                     m: 8,
                     y: 2020,
                     msD: 0,
-                    type: 'Checkpoint',
+                    type: 'N',
                 },
                 {
                     dow: 0,
@@ -1631,6 +1634,7 @@ export default new Vuex.Store({
                 icon: '',
                 color: 1,
                 days: [],
+                notify: 0,
                 done: [],
             },
             days: [
@@ -2431,6 +2435,9 @@ export default new Vuex.Store({
     mutations: {
         setSelected(state, sel) {
             state.calendarSelected = sel;
+        },
+        setNotifications(state, n) {
+            state.notifications = n;
         },
     },
     actions: {},
