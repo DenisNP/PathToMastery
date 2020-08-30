@@ -5,7 +5,10 @@ namespace PathToMastery.Models
     public class User : IIdentity
     {
         public string Id { get; set; }
+        
+        [JsonIgnore]
         public long NotifyTime { get; set; }
+        [JsonIgnore]
         public string NotifyMessage { get; set; }
         
         [JsonIgnore]
