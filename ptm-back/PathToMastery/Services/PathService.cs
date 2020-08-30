@@ -280,7 +280,7 @@ namespace PathToMastery.Services
                 Data = data
             };
             
-            for (var d = 0; d < daysDiff; d++)
+            for (var d = 0; d <= daysDiff; d++)
             {
                 Day day;
                 var milestoneDays = 0;
