@@ -64,3 +64,24 @@ export const chunk = (arr, len) => {
 
     return chunks;
 };
+
+export const getNumericPhrase = (num, one, few, many) => {
+    // eslint-disable-next-line no-param-reassign
+    num = Number(num) < 0 ? 0 : Number(num);
+
+    let postfix = '';
+    if (num < 10) {
+        if (num === 1) postfix = one;
+        else if (num > 1 && num < 5) postfix = few;
+        else postfix = many;
+    } else if (num <= 20) {
+        postfix = many;
+    } else if (num <= 99) {
+        const lastOne = num - (Math.floor(num / 10)) * 10;
+        postfix = getNumericPhrase(lastOne, one, few, many);
+    } else {
+        const lastTwo = num - (Math.floor(num / 100)) * 100;
+        postfix = getNumericPhrase(lastTwo, one, few, many);
+    }
+    return postfix;
+};

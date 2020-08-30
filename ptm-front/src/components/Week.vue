@@ -5,6 +5,7 @@
             :key="d.dow"
             class="tc width-100 pv3 f5 relative"
             :class="{'o-40': d.m !== $store.state.currentMonth, 'fw7': isCurrent(d)}"
+            @click="showDay(d)"
         >
             {{d.d}}
             <div
@@ -23,6 +24,7 @@
                     || d.type === 'Done'
                     || d.type === 'DoneBreak'"
                 class="point"
+                :class="{'o-40': d.type === 'Checkpoint'}"
                 :style="`color: ${color};`"
             >
                 <svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
@@ -55,6 +57,8 @@
 </template>
 
 <script>
+import { getNumericPhrase } from '@/common/utils';
+
 export default {
     name: 'Week',
     computed: {
@@ -66,6 +70,23 @@ export default {
         isCurrent(d) {
             const now = new Date();
             return now.getDate() === d.d && now.getMonth() + 1 === d.m && now.getFullYear() === d.y;
+        },
+        showDay(d) {
+            if (d.type === 'Checkpoint') {
+                this.$f7.toast.create({
+                    text: 'В этот день будет следующий шаг на данном Пути',
+                    position: 'center',
+                    cssClass: 'my-text-center',
+                    closeTimeout: 2000,
+                }).open();
+            } else if (d.msD > 0) {
+                this.$f7.toast.create({
+                    text: `<b>Веха на Пути</b><br/><br/>${d.msD} ${getNumericPhrase(d.msD, 'день', 'дня', 'дней')}`,
+                    position: 'center',
+                    cssClass: 'my-text-center',
+                    closeTimeout: 2000,
+                }).open();
+            }
         },
     },
     props: {

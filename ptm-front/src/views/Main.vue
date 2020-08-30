@@ -50,6 +50,15 @@
                 />
             </div>
         </div>
+<!--        <f7-sheet-->
+<!--            style="&#45;&#45;f7-sheet-bg-color: #fff;"-->
+<!--            swipe-to-close-->
+<!--            backdrop-->
+<!--        >-->
+<!--            <div>-->
+<!--                <div>Веха на Пути</div>-->
+<!--            </div>-->
+<!--        </f7-sheet>-->
     </f7-page>
 </template>
 

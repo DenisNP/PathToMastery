@@ -226,9 +226,11 @@ namespace PathToMastery.Services
                 var prevDowIndex = data.Days.ToList().IndexOf(dow) - 1;
                 if (prevDowIndex < 0) prevDowIndex = data.Days.Length - 1;
                 var prevDate = prevDone.ToDateTimeOffset(offset);
+                var prevDow = (int) prevDate.DayOfWeek;
+                if (prevDow == 0) prevDow = 7;
                 
                 // if prev dow is prev element of Days array, and there is less than week passed, it is not break
-                if ((int)prevDate.DayOfWeek == data.Days[prevDowIndex] && (now - prevDate).TotalDays <= 7.0)
+                if (prevDow == data.Days[prevDowIndex] && (now - prevDate).TotalDays <= 7.0)
                 {
                     prevDone.Type = DateType.DoneLink;
                 }
@@ -342,7 +344,7 @@ namespace PathToMastery.Services
                     // checkpoint day not done
                     if (date < now)
                     {
-                        if (data.Done.Count > 0)
+                        if (data.Done.Count > 0 && date >= data.Done.First().ToDateTimeOffset(offset))
                         {
                             type = DateType.Break;
                             earliestLink = DateTimeOffset.MinValue;
@@ -364,7 +366,7 @@ namespace PathToMastery.Services
                     var nextCheckpoint = GetNextCheckpointFor(data, date, dow);
 
                     var isNextDone = done.IsDayOf(nextCheckpoint);
-                    if (isNextDone) type = DateType.Link;
+                    if (isNextDone && nextDoneIndex > 0) type = DateType.Link;
                 }
                 
                 if (date >= now && !isMilestoneSet && earliestLink != DateTimeOffset.MinValue && data.Days.Contains(dow))
@@ -379,7 +381,9 @@ namespace PathToMastery.Services
             }
             
             // check if current day can be done
-            path.CanBeDone = data.Days.Contains((int) now.DayOfWeek) && !isTodayDone;
+            var cDow = (int) now.DayOfWeek;
+            if (cDow == 0) cDow = 7;
+            path.CanBeDone = data.Days.Contains(cDow) && !isTodayDone;
             
             return path;
         }
