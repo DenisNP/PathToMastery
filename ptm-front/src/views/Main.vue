@@ -134,6 +134,13 @@ export default {
                     || today.type === 'DoneLink'
                 )) {
                 this.milestone(today);
+            } else {
+                this.$f7.toast.create({
+                    text: 'Готово, продолжайте в том же духе!',
+                    position: 'center',
+                    cssClass: 'my-text-center',
+                    closeTimeout: 2500,
+                }).open();
             }
         },
         async milestone(d) {
