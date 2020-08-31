@@ -294,6 +294,7 @@ namespace PathToMastery.Services
             var isTodayDone = false;
             var wasCheckpoint = false;
             var isMilestoneSet = false;
+            var isPrevCheckpointBreak = false;
             var earliestLink = DateTimeOffset.MinValue;
             var path = new Path
             {
@@ -330,6 +331,7 @@ namespace PathToMastery.Services
                         {
                             earliestLink = DateTimeOffset.MinValue;
                         }
+                        isPrevCheckpointBreak = done.Type == DateType.DoneBreak;
                         continue;
                     }
                 }
@@ -347,6 +349,7 @@ namespace PathToMastery.Services
                         {
                             type = DateType.Break;
                             earliestLink = DateTimeOffset.MinValue;
+                            isPrevCheckpointBreak = true;
                         }
                     }
                     else if (!wasCheckpoint)
@@ -365,7 +368,7 @@ namespace PathToMastery.Services
                     var nextCheckpoint = GetNextCheckpointFor(data, date, dow);
 
                     var isNextDone = done.IsDayOf(nextCheckpoint);
-                    if (isNextDone && nextDoneIndex > 0) type = DateType.Link;
+                    if (isNextDone && nextDoneIndex > 0 && !isPrevCheckpointBreak) type = DateType.Link;
                 }
                 
                 if (date >= now && !isMilestoneSet && earliestLink != DateTimeOffset.MinValue && data.Days.Contains(dow))
