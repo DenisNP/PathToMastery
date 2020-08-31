@@ -128,6 +128,7 @@ namespace PathToMastery.Controllers
                 throw;
 #endif
                 _logger.LogWarning(e.Message);
+                _logger.LogWarning(e.StackTrace);
                 Response.StatusCode = 400;
                 return Response.WriteAsync(new ErrorResponse(e.Message).ToString());
             }
