@@ -1,5 +1,62 @@
 <template>
     <f7-app :params="f7params">
+        <transition name="popup">
+            <div class="onboarding" v-if="$store.state.showOnboarding">
+                <f7-swiper pagination>
+                    <f7-swiper-slide>
+                        <div class="onboarding-slide">
+                            <div class="ob-pic">
+                                <img src="./assets/onboarding_0.jpg">
+                            </div>
+                            <div class="ob-text">
+                                «Путь К Мастерству» — трекер привычек.
+                                Создайте себе задание и установите дни его выполнения.
+                                <span class="ob-small">
+                                    <i>Путь в тысячу ли начинается с одного шага (Лао-Цзы)</i>
+                                </span>
+                            </div>
+                            <f7-button fill @click="slideNext">Далее</f7-button>
+                        </div>
+                    </f7-swiper-slide>
+                    <f7-swiper-slide>
+                        <div class="onboarding-slide">
+                            <div class="ob-pic">
+                                <img src="./assets/onboarding_1.jpg">
+                            </div>
+                            <div class="ob-text">
+                                Заходите в приложение и отмечайте свой прогресс.
+                                Приложение будет напоминать вам об этом.
+                                <span class="ob-small">
+                                    <i>
+                                        Я не боюсь того, кто изучает 10000 различных ударов;
+                                        я боюсь того, кто изучает один удар 10000 раз
+                                        (Брюс Ли)
+                                    </i>
+                                </span>
+                            </div>
+                            <f7-button fill @click="slideNext">Далее</f7-button>
+                        </div>
+                    </f7-swiper-slide>
+                    <f7-swiper-slide>
+                        <div class="onboarding-slide">
+                            <div class="ob-pic">
+                                <img src="./assets/onboarding_2.jpg">
+                            </div>
+                            <div class="ob-text">
+                                В ключевые моменты делитесь успехами с друзьями с помощью Историй
+                                со специальным стикером.
+                                <span class="ob-small">
+                                    <i>
+                                        Дорога возникает под шагами идущего (Буддистская пословица)
+                                    </i>
+                                </span>
+                            </div>
+                            <f7-button fill @click="start">Начать</f7-button>
+                        </div>
+                    </f7-swiper-slide>
+                </f7-swiper>
+            </div>
+        </transition>
         <f7-view :push-state="true" main url="/"/>
     </f7-app>
 </template>
@@ -30,6 +87,15 @@ export default {
                 },
             },
         };
+    },
+    methods: {
+        slideNext() {
+            const sw = this.$f7.swiper.get();
+            if (sw) sw.slideNext();
+        },
+        start() {
+            this.$store.dispatch('saveOnboarding');
+        },
     },
     computed: {
         isLoading() {
@@ -105,5 +171,65 @@ body {
 
 .c-font {
   font-family: 'Maler', sans-serif;
+}
+
+.onboarding {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 5001;
+}
+
+.onboarding-slide {
+    width: calc(100vw - 40px);
+    /*noinspection CssInvalidFunction*/
+    height: calc(100vh - 155px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: 140vw;
+    /*noinspection CssInvalidFunction*/
+    margin-top: calc(55px + env(safe-area-inset-top));
+    margin-left: 20px;
+    background: white;
+    border-radius: 15px;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.popup-enter-active, .popup-leave-active {
+    transition: all .3s;
+}
+
+.popup-enter, .popup-leave-to {
+    transform: scale(0.1);
+    opacity: 0;
+}
+
+.ob-text {
+    text-align: center;
+    font-size: 14px;
+}
+
+.ob-small {
+    font-size: 13px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.ob-pic {
+    width: calc(100vw - 140px);
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 10px;
+    overflow: hidden;
+    line-height: 0;
+}
+
+.ob-pic > img {
+    width: 100%;
 }
 </style>
