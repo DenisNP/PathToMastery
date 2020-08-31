@@ -320,8 +320,7 @@ namespace PathToMastery.Services
                         }
 
                         if (
-                            done.Type == DateType.DoneLink
-                            || done.Type == DateType.Done
+                            (done.Type == DateType.DoneLink || done.Type == DateType.Done)
                             && earliestLink == DateTimeOffset.MinValue
                         )
                         {
@@ -398,7 +397,11 @@ namespace PathToMastery.Services
         private int FindMilestoneDays(PathData data, DateTimeOffset date, DateTimeOffset earliestLink)
         {
             var daysFromStart = (int)Math.Round((date - earliestLink).TotalDays) + 1;
-            var milestone = _milestones.FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone <= daysFromStart);
+            var largestMilestone = data.Done.Max(d => d.MsD);
+            var milestone = _milestones
+                .SkipWhile(m => m.DaysDone <= largestMilestone)
+                .FirstOrDefault(m => m.DaysNeed.Contains(data.Days.Length) && m.DaysDone <= daysFromStart);
+            
             return milestone == null ? 0 : daysFromStart;
         }
 
