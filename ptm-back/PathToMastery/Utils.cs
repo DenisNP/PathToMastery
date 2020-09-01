@@ -95,6 +95,12 @@ namespace PathToMastery
             return s.Length <= len ? s : (s.Substring(0, len) + postfix);
         }
 
+        public static int NormalDow(this DateTimeOffset date)
+        {
+            var dow = (int) date.DayOfWeek;
+            return dow == 0 ? 7 : dow;
+        }
+
         public static bool IsSameDayAs(this DateTimeOffset offset, DateTimeOffset second)
         {
             return offset.Day == second.Day && offset.Month == second.Month && offset.Year == second.Year;

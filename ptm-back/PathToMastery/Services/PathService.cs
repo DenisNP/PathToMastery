@@ -213,8 +213,7 @@ namespace PathToMastery.Services
             var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
             now -= now.TimeOfDay;
 
-            var dow = (int) now.DayOfWeek;
-            if (dow == 0) dow = 7;
+            var dow = now.NormalDow();
             
             // check if it can be done
             if (!data.Days.Contains(dow) || data.Done.Any(d => d.IsDayOf(now))) return;
@@ -226,8 +225,7 @@ namespace PathToMastery.Services
                 var prevDowIndex = data.Days.ToList().IndexOf(dow) - 1;
                 if (prevDowIndex < 0) prevDowIndex = data.Days.Length - 1;
                 var prevDate = prevDone.ToDateTimeOffset(offset);
-                var prevDow = (int) prevDate.DayOfWeek;
-                if (prevDow == 0) prevDow = 7;
+                var prevDow = prevDate.NormalDow();
                 
                 // if prev dow is prev element of Days array, and there is less than week passed, it is not break
                 if (prevDow == data.Days[prevDowIndex] && (now - prevDate).TotalDays <= 7.0)
@@ -337,8 +335,7 @@ namespace PathToMastery.Services
                 }
                 
                 // add simple day
-                var dow = (int) date.DayOfWeek;
-                if (dow == 0) dow = 7;
+                var dow = date.NormalDow();
                 var type = DateType.N;
                 if (data.Days.Contains(dow))
                 {
@@ -383,8 +380,7 @@ namespace PathToMastery.Services
             }
             
             // check if current day can be done
-            var cDow = (int) now.DayOfWeek;
-            if (cDow == 0) cDow = 7;
+            var cDow = now.NormalDow();
             path.CanBeDone = data.Days.Contains(cDow) && !isTodayDone;
             
             return path;
@@ -410,8 +406,7 @@ namespace PathToMastery.Services
 
         private DateTimeOffset ToClosestUp(DateTimeOffset d, int dayOfWeek, bool forceStrictLater = false)
         {
-            var currentDow = (int)d.DayOfWeek;
-            if (currentDow == 0) currentDow = 7;
+            var currentDow = d.NormalDow();
 
             var diff = dayOfWeek - currentDow;
             if (diff < 0 || diff == 0 && forceStrictLater) diff += 7;
@@ -421,8 +416,7 @@ namespace PathToMastery.Services
 
         private DateTimeOffset ToClosestDown(DateTimeOffset d, int dayOfWeek)
         {
-            var currentDow = (int)d.DayOfWeek;
-            if (currentDow == 0) currentDow = 7;
+            var currentDow = d.NormalDow();
 
             var diff = dayOfWeek - currentDow;
             if (diff > 0) diff -= 7;
@@ -482,7 +476,7 @@ namespace PathToMastery.Services
             if (data.Notify < 0 || string.IsNullOrEmpty(data.Name)) return 0;
             var (h, m) = UnpackTime(data.Notify);
             var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
-            var dow = (int) now.DayOfWeek;
+            var dow = now.NormalDow();
 
             DateTimeOffset notifyDate;
             var notifyTime = new TimeSpan(h, m, 0);
