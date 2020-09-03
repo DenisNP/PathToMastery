@@ -18,7 +18,10 @@ namespace PathToMastery
             services.AddSingleton<ConcurrencyService>();
             services.AddSingleton<IDbService, MongoService>();
             services.AddSingleton<ISocialService, VkService>();
+            services.AddSingleton<UtilsService>();
+            services.AddSingleton<MilestoneService>();
             services.AddSingleton<PathService>();
+            services.AddSingleton<VillageService>();
 
             services.AddHostedService<NotificationService>();
         }

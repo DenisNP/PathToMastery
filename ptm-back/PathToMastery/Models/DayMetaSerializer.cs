@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.Serializers;
+using PathToMastery.Models.State;
 
 namespace PathToMastery.Models
 {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PathToMastery.Models
+namespace PathToMastery.Models.State
 {
     public class PathData
     {
@@ -18,6 +18,16 @@ namespace PathToMastery.Models
             Color = 0;
             Days = new int[0];
             Done = new List<DayMeta>();
+        }
+
+        public PathMeta ToMeta(int days)
+        {
+            return new PathMeta
+            {
+                Name = Name,
+                Color = Color,
+                Days = days
+            };
         }
     }
 }
