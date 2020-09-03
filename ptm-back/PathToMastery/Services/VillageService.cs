@@ -23,6 +23,7 @@ namespace PathToMastery.Services
             
             var pagodas = new List<Pagoda>();
             var pathMetas = new List<PathMeta>();
+            var allDays = new List<(Day, int)>();
             
             foreach (var path in paths)
             {
@@ -30,61 +31,68 @@ namespace PathToMastery.Services
                 
                 var nonEmptyDays = path.Days
                     .Where(d => d.Type != DateType.N && d.Type != DateType.Link && d.Type != DateType.Checkpoint)
+                    .Select(d => (d, path.Data.Color))
                     .ToList();
 
                 // calculate last unbreakable chain length
                 var daysLast = nonEmptyDays.AsEnumerable()
                     .Reverse()
-                    .TakeWhile(d => d.Type == DateType.Done || d.Type == DateType.DoneLink)
+                    .TakeWhile(d => d.Item1.Type == DateType.Done || d.Item1.Type == DateType.DoneLink)
                     .Count();
                 
                 pathMetas.Add(path.Data.ToMeta(daysLast));
                 
-                // generate pagodas
-                foreach (var day in nonEmptyDays)
-                {
-                    var isBreak = day.Type == DateType.Break;
-                    var pagodasOfColor = pagodas.Where(p => p.Color == path.Data.Color).ToList();
-                    if (isBreak && pagodasOfColor.Count > 0)
-                    {
-                        // on break destroy random pagoda
-                        var pIndex = random.Next(0, pagodasOfColor.Count);
-                        pagodas.Remove(pagodasOfColor[pIndex]);
-                    }
-                    else if (!isBreak)
-                    {
-                        // level up random pagoda or create a new one
-                        var levelUp = random.Next(100) <= 25;
-                        var notMaxPagodas = pagodasOfColor.Where(p => p.Level < MaxLevel).ToList();
-                        if ((levelUp || points.Count == 0) && notMaxPagodas.Count > 0)
-                        {
-                            var nmIndex = random.Next(0, notMaxPagodas.Count);
-                            notMaxPagodas[nmIndex].Level++;
-                        }
-                        else if (points.Count > 0)
-                        {
-                            // create a new one
-                            var pointIndex = random.Next(0, Math.Min(NewPagodaPointRange, points.Count));
-                            var point = points[pointIndex];
-                            points.RemoveAt(pointIndex);
+                // store days
+                allDays.AddRange(nonEmptyDays);
+            }
 
-                            var pagoda = new Pagoda
-                            {
-                                X = point.X,
-                                Y = point.Y,
-                                Color = path.Data.Color,
-                                Level = 1
-                            };
-                            pagodas.Add(pagoda);
-                        }
-                        else
+            // enumerate all days
+            allDays = allDays.OrderBy(d => d.Item1.Date).ToList();
+
+            // generate pagodas
+            foreach (var (day, color) in allDays)
+            {
+                var isBreak = day.Type == DateType.Break;
+                var pagodasOfColor = pagodas.Where(p => p.Color == color).ToList();
+                if (isBreak && pagodasOfColor.Count > 0)
+                {
+                    // on break destroy random pagoda
+                    var pIndex = random.Next(0, pagodasOfColor.Count);
+                    pagodas.Remove(pagodasOfColor[pIndex]);
+                }
+                else if (!isBreak)
+                {
+                    // level up random pagoda or create a new one
+                    var levelUp = random.Next(100) <= 25;
+                    var notMaxPagodas = pagodasOfColor.Where(p => p.Level < MaxLevel).ToList();
+                    if ((levelUp || points.Count == 0) && notMaxPagodas.Count > 0)
+                    {
+                        var nmIndex = random.Next(0, notMaxPagodas.Count);
+                        notMaxPagodas[nmIndex].Level++;
+                    }
+                    else if (points.Count > 0)
+                    {
+                        // create a new one
+                        var pointIndex = random.Next(0, Math.Min(NewPagodaPointRange, points.Count));
+                        var point = points[pointIndex];
+                        points.RemoveAt(pointIndex);
+
+                        var pagoda = new Pagoda
                         {
-                            break;
-                        }
+                            X = point.X,
+                            Y = point.Y,
+                            Color = color,
+                            Level = 1
+                        };
+                        pagodas.Add(pagoda);
+                    }
+                    else
+                    {
+                        break;
                     }
                 }
             }
-
+            
             return new Village
             {
                 Pagodas = pagodas.OrderBy(p => p.X).ThenBy(p => p.Y).ToList(),
