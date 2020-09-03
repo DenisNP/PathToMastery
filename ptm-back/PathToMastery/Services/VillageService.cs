@@ -26,6 +26,8 @@ namespace PathToMastery.Services
             
             foreach (var path in paths)
             {
+                if (path == null || string.IsNullOrEmpty(path.Data.Name)) continue;
+                
                 var nonEmptyDays = path.Days
                     .Where(d => d.Type != DateType.N && d.Type != DateType.Link && d.Type != DateType.Checkpoint)
                     .ToList();

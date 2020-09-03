@@ -6,5 +6,6 @@
         public Path First { get; set; }
         public Path Second { get; set; }
         public Path Third { get; set; }
+        public Village Village { get; set; }
     }
 }
