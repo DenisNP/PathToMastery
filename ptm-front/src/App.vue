@@ -64,6 +64,7 @@
 <script>
 import Main from '@/views/Main.vue';
 import Create from '@/views/Create.vue';
+import Village from '@/views/Village.vue';
 
 export default {
     name: 'App',
@@ -79,6 +80,10 @@ export default {
                     {
                         path: '/create/:pathId',
                         component: Create,
+                    },
+                    {
+                        path: '/village',
+                        component: Village,
                     },
                 ],
                 dialog: {

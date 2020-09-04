@@ -90,3 +90,5 @@ export const getNumericPhrase = (num, one, few, many) => {
     }
     return postfix;
 };
+
+export const range = (num) => [...Array(num).keys()];

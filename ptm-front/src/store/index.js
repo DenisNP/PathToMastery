@@ -64,6 +64,10 @@ export default new Vuex.Store({
             },
             days: [],
         },
+        village: {
+            pagodas: [],
+            paths: [],
+        },
     },
     getters: {
         calendar(state) {
@@ -104,6 +108,7 @@ export default new Vuex.Store({
             state.first = s.first;
             state.second = s.second;
             state.third = s.third;
+            state.village = s.village;
         },
     },
     actions: {

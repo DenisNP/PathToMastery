@@ -1,6 +1,6 @@
 <template>
     <f7-page>
-        <f7-navbar :title="data.name ? 'Редактировать путь' : 'Новый путь'" back-link/>
+        <f7-navbar :title="data.name ? 'Изменить путь' : 'Новый путь'" back-link/>
         <div class="pl3 mt2 mb2 fw5">
             Название
         </div>

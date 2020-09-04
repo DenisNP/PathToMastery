@@ -1,0 +1,135 @@
+<template>
+    <f7-page class="village-page">
+        <f7-navbar title="Ваш прогресс" back-link/>
+        <div class="village-bg">
+            <img src="../assets/village_bg.svg" alt="background"/>
+            <div
+                class="pagoda"
+                v-for="p in $store.state.village.pagodas"
+                :key="p[0]"
+                :style="`left: ${points[p.x - 1][p.y - 1][1]}vw;
+                    top: ${points[p.x - 1][p.y - 1][0]}vw;`"
+            >
+                <img class="p-base" src="../assets/pagoda_base.svg" alt="house"/>
+                <img
+                    class="p-roof"
+                    :class="`p-roof-${p.level}`"
+                    :src="roofs[p.level - 1][p.color - 1]" alt="roof"/>
+            </div>
+        </div>
+    </f7-page>
+</template>
+
+<script>
+/* eslint-disable global-require */
+
+import { range } from '@/common/utils';
+
+const horStep = 4.4;
+const verStep = -7.85;
+
+export default {
+    name: 'Village',
+    data() {
+        return {
+            points: [
+                range(2).map((i) => [68.5 + i * horStep, 13 + i * verStep]),
+                range(4).map((i) => [70 + i * horStep, 30 + i * verStep]),
+                range(7).map((i) => [69 + i * horStep, 55 + i * verStep]),
+                range(8).map((i) => [74.5 + i * horStep, 69 + i * verStep]),
+                range(8).map((i) => [81 + i * horStep, 82 + i * verStep]),
+                range(5).map((i) => [94.5 + i * horStep, 82 + i * verStep]),
+                range(2).map((i) => [108 + i * horStep, 82 + i * verStep]),
+            ],
+            roofs: [
+                [
+                    require('../assets/pagoda_roof_1_1.svg'),
+                    require('../assets/pagoda_roof_1_2.svg'),
+                    require('../assets/pagoda_roof_1_3.svg'),
+                    require('../assets/pagoda_roof_1_4.svg'),
+                    require('../assets/pagoda_roof_1_5.svg'),
+                    require('../assets/pagoda_roof_1_6.svg'),
+                    require('../assets/pagoda_roof_1_7.svg'),
+                ],
+                [
+                    require('../assets/pagoda_roof_2_1.svg'),
+                    require('../assets/pagoda_roof_2_2.svg'),
+                    require('../assets/pagoda_roof_2_3.svg'),
+                    require('../assets/pagoda_roof_2_4.svg'),
+                    require('../assets/pagoda_roof_2_5.svg'),
+                    require('../assets/pagoda_roof_2_6.svg'),
+                    require('../assets/pagoda_roof_2_7.svg'),
+                ],
+                [
+                    require('../assets/pagoda_roof_3_1.svg'),
+                    require('../assets/pagoda_roof_3_2.svg'),
+                    require('../assets/pagoda_roof_3_3.svg'),
+                    require('../assets/pagoda_roof_3_4.svg'),
+                    require('../assets/pagoda_roof_3_5.svg'),
+                    require('../assets/pagoda_roof_3_6.svg'),
+                    require('../assets/pagoda_roof_3_7.svg'),
+                ],
+            ],
+        };
+    },
+};
+</script>
+
+<style scoped>
+.village-bg {
+    width: 100vw;
+    height: 157vw;
+    position: relative;
+}
+
+.village-bg > img{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.village-page {
+    background-color: #F0F4EB;
+}
+
+.pagoda {
+    position: absolute;
+}
+
+.p-base {
+    position: absolute;
+    min-width: 13.3vw;
+    min-height: 8.8vw;
+    width: 13.3vw;
+    height: 8.8vw;
+    bottom: 0;
+    left: 0;
+}
+
+.p-roof {
+    position: absolute;
+    min-width: 12.3vw;
+    width: 12.3vw;
+    bottom: 5.8vw;
+    left: 0.7vw;
+}
+
+.p-roof-1 {
+    min-height: 6.4vw;
+    height: 6.4vw;
+}
+
+.p-roof-2 {
+    min-height: 10.1vw;
+    height: 10.1vw;
+}
+
+.p-roof-3 {
+    min-height: 12.5vw;
+    height: 12.5vw;
+    min-width: 13.3vw;
+    width: 13.3vw;
+    bottom: 3.3vw;
+    left: 0.1vw;
+}
+</style>

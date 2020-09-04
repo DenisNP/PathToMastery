@@ -50,6 +50,9 @@
                 />
             </div>
         </div>
+        <f7-fab position="right-bottom" class="village-btn" @click="openVillage">
+            <img src="../assets/village_button.svg"/>
+        </f7-fab>
         <f7-sheet
             style="--f7-sheet-bg-color: #fff;"
             swipe-to-close
@@ -158,10 +161,19 @@ export default {
             );
             VKC.send('VKWebAppShowStoryBox', data);
         },
+        openVillage() {
+            this.$f7.views.main.router.navigate('/village');
+        },
     },
     components: { DoButton, Calendar },
 };
 </script>
+
+<style>
+    .village-btn > a {
+        background-color: #FF1F47;
+    }
+</style>
 
 <style scoped>
     .logo-image {
@@ -202,5 +214,9 @@ export default {
         height: 90px;
         border-radius: 10px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .village-btn img {
+        min-width: 58px;
     }
 </style>
