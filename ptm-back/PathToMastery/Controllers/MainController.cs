@@ -89,7 +89,18 @@ namespace PathToMastery.Controllers
             var body = reader.ReadToEnd();
             
             _logger.LogInformation($"REQUEST {typeof(TRequest)}:\n{body}");
-            var request = JsonConvert.DeserializeObject<TRequest>(body, Utils.ConverterSettings);
+            TRequest request;
+
+            try
+            {
+                request = JsonConvert.DeserializeObject<TRequest>(body, Utils.ConverterSettings);
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning($"Invalid request: {e.Message}");
+                Response.StatusCode = 400;
+                return Response.WriteAsync(new ErrorResponse($"Invalid request: {e.Message}").ToString());
+            }
 
             // check sign
             if (request == null || !_socialService.IsSignValid(request.UserId, request.Params, request.Sign))

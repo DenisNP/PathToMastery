@@ -50,7 +50,7 @@ namespace PathToMastery.Services
             var paths = new[] {user.First, user.Second, user.Third};
             
             PathData best = null;
-            long earliest = long.MaxValue;
+            var earliest = long.MaxValue;
             foreach (var pathData in paths)
             {
                 var notifyTime = NextNotify(pathData, offset);
