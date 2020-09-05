@@ -1,18 +1,19 @@
 <template>
     <f7-page>
-        <f7-navbar :title="data.name ? 'Изменить путь' : 'Новый путь'" back-link/>
+        <f7-navbar :title="data.name ? 'Изменить Путь' : 'Новый Путь'" back-link/>
         <div class="pl3 mt2 mb2 fw5">
             Название
         </div>
         <f7-list no-hairlines-md style="margin: 0;">
             <f7-list-input
                 :value="name"
-                @input="name = $event.target.value"
+                @input="name = $event.target.value.substring(0, 30)"
                 type="text"
                 placeholder="Делать зарядку каждый день"
                 maxlength="30"
                 minlength="1"
                 clear-button
+                class="name-input"
             />
         </f7-list>
         <div
@@ -85,7 +86,7 @@
             />
         </f7-list>
         <f7-button
-            :disabled="this.days.length === 0 || !this.name"
+            :disabled="this.days.length === 0 || !this.trimmedName"
             class="big-btn"
             large
             fill
@@ -94,7 +95,7 @@
             Сохранить
         </f7-button>
         <f7-button v-show="data.name" class="big-btn color-red" large outline @click="deletePath">
-            Удалить путь
+            Удалить Путь
         </f7-button>
     </f7-page>
 </template>
@@ -141,6 +142,9 @@ export default {
         notifyTime() {
             return `${this.notifyHour.toString().padStart(2, '0')}:${this.notifyMinute.toString().padStart(2, '0')}`;
         },
+        trimmedName() {
+            return this.name.trim();
+        },
     },
     methods: {
         changeIcon(emoji) {
@@ -178,21 +182,35 @@ export default {
         savePath() {
             this.days.sort();
             if (this.data.days.length > 0 && this.data.days.join('|') !== this.days.join('|')) {
-                this.$f7.dialog.confirm(
+                const dialog = this.$f7.dialog.confirm(
                     'Редактирование дней выполнения Пути может сказаться на непрерывности вашего прогресса. Продолжить?',
-                    'Изменить путь',
-                    () => this.confirmEdit(),
+                    'Изменить Путь',
+                    () => {
+                        window.history.back();
+                        this.confirmEdit();
+                    },
+                    () => {
+                        window.history.back();
+                    },
                 );
+                this.$store.dispatch('openDialog', dialog);
             } else {
                 this.confirmEdit();
             }
         },
         async deletePath() {
-            this.$f7.dialog.confirm(
+            const dialog = this.$f7.dialog.confirm(
                 'Удаление Пути необратимо и сотрёт весь ваш прогресс по нему. Продолжить?',
-                'Удалить путь',
-                () => this.confirmDelete(),
+                'Удалить Путь',
+                () => {
+                    window.history.back();
+                    this.confirmDelete();
+                },
+                () => {
+                    window.history.back();
+                },
             );
+            this.$store.dispatch('openDialog', dialog);
         },
         async confirmEdit() {
             const result = await this.$store.dispatch('api', {
@@ -257,6 +275,10 @@ export default {
 
     .md .day-btn {
         padding-top: 2px;
+    }
+
+    .name-input input {
+        padding-right: 18px!important;
     }
 </style>
 

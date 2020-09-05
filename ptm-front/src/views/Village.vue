@@ -1,11 +1,11 @@
 <template>
-    <f7-page class="village-page">
+    <f7-page class="village-page relative">
         <f7-navbar title="Ваш прогресс" back-link/>
         <div class="village-bg">
             <img src="../assets/village_bg.svg" alt="background"/>
             <div
                 class="pagoda"
-                v-for="p in $store.state.village.pagodas"
+                v-for="p in village.pagodas"
                 :key="p[0]"
                 :style="`left: ${points[p.x - 1][p.y - 1][1]}vw;
                     top: ${points[p.x - 1][p.y - 1][0]}vw;`"
@@ -15,6 +15,18 @@
                     class="p-roof"
                     :class="`p-roof-${p.level}`"
                     :src="roofs[p.level - 1][p.color - 1]" alt="roof"/>
+            </div>
+        </div>
+        <div class="village-bottom">
+            <div class="village-header">
+                <div v-for="p in village.paths" :key="p.name + p.color" class="path-data-block">
+                    <f7-badge
+                        :style="`--f7-badge-bg-color: ${colors[p.color - 1][0]};
+                            --f7-badge-text-color: ${colors[p.color - 1][3]};`">
+                        {{p.days}}
+                    </f7-badge>
+                    <span>{{p.name}}</span>
+                </div>
             </div>
         </div>
     </f7-page>
@@ -71,6 +83,14 @@ export default {
                 ],
             ],
         };
+    },
+    computed: {
+        colors() {
+            return this.$store.state.colors;
+        },
+        village() {
+            return this.$store.state.village;
+        },
     },
 };
 </script>
@@ -131,5 +151,46 @@ export default {
     width: 13.3vw;
     bottom: 3.3vw;
     left: 0.1vw;
+}
+
+.village-bottom {
+    position: absolute;
+    bottom: 25px;
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    width: calc(100% - 50px);
+    height: 128px;
+    left: 25px;
+}
+
+.village-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 77px;
+    --f7-badge-font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.path-data-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 30%;
+}
+
+.path-data-block > span {
+    margin-top: 3px;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    text-align: center;
+    max-height: 40px;
+    overflow: hidden;
 }
 </style>

@@ -2,7 +2,8 @@
     <div>
         <div class="c-font f4 tc pv3">{{monthName}}</div>
         <div
-            class="cal-sheet overflow-y-scroll overflow-x-hidden"
+            class="cal-sheet overflow-x-hidden"
+            :class="{'overflow-y-scroll': data.name, ' overflow-y-hidden': !data.name}"
             @scroll="calendarScroll"
             ref="calendarSheet"
         >
@@ -60,14 +61,17 @@ export default {
             }
         },
         setScroll() {
+            this.$nextTick(() => {
+                this.$refs.calendarSheet.scrollTop = this.getScroll();
+            });
+        },
+        getScroll() {
             const currentWeekIdx = this.weeks.findIndex(
                 (w) => w.some((d) => isCurrentDay(d)),
             );
 
             const weekToScroll = Math.max(0, currentWeekIdx - 2);
-            this.$nextTick(() => {
-                this.$refs.calendarSheet.scrollTop = weekHeight * weekToScroll;
-            });
+            return weekHeight * weekToScroll;
         },
         createPath() {
             this.$f7.views.main.router.navigate(`create/${this.calendarSelected}`);
@@ -92,9 +96,14 @@ export default {
         calendarSelected() {
             this.setScroll();
         },
+        weeks(w) {
+            if (w && w.length) this.setScroll();
+        },
     },
     mounted() {
-        this.setScroll();
+        this.$nextTick(() => {
+            this.setScroll();
+        });
     },
 };
 </script>

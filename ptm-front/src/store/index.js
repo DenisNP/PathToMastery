@@ -13,17 +13,19 @@ export default new Vuex.Store({
         isLoading: false,
         noInternet: false,
         showOnboarding: false,
+        lastToast: null,
+        currentDialog: null,
         calendarSelected: 2,
         notifications: true,
         currentMonth: 8,
         colors: [
-            ['#222121', '#29323C', '#485563'],
-            ['#FF1F47', '#FF0844', '#FFB199'],
-            ['#85878B', '#78787A', '#BDBBBE'],
-            ['#3D4EB8', '#4250A7', '#6B7CE8'],
-            ['#48B6AD', '#48BDB7', '#85D8D3'],
-            ['#0C74D5', '#3780D7', '#45A6FF'],
-            ['#FFA800', '#FDA085', '#F6D365'],
+            ['#222121', '#29323C', '#485563', '#FFFFFF'],
+            ['#FF1F47', '#FF0844', '#FFB199', '#FFFFFF'],
+            ['#85878B', '#78787A', '#BDBBBE', '#FFFFFF'],
+            ['#3D4EB8', '#4250A7', '#6B7CE8', '#FFFFFF'],
+            ['#48B6AD', '#48BDB7', '#85D8D3', '#222121'],
+            ['#0C74D5', '#3780D7', '#45A6FF', '#FFFFFF'],
+            ['#FFA800', '#FDA085', '#F6D365', '#222121'],
         ],
         user: {
             id: '463377',
@@ -110,6 +112,12 @@ export default new Vuex.Store({
             state.third = s.third;
             state.village = s.village;
         },
+        setToast(state, toast) {
+            state.lastToast = toast;
+        },
+        setCurrentDialog(state, cDialog) {
+            state.currentDialog = cDialog;
+        },
     },
     actions: {
         async api({ commit }, { method, data, disableLoading }) {
@@ -122,6 +130,11 @@ export default new Vuex.Store({
         },
 
         async init({ commit, dispatch }) {
+            // load data
+            const result = await dispatch('api', { method: 'init', data: {} });
+            if (!result || !result.state) return;
+
+            // init
             VKC.init({
                 appId: getAppId(),
                 accessToken: getPlatform() === 'local' ? process.env.VUE_APP_VK_DEV_TOKEN : '',
@@ -136,6 +149,14 @@ export default new Vuex.Store({
                 { status_bar_style: 'dark', action_bar_color: '#FBFBFB' },
             );
 
+            // subscribe
+            VKC.subscribe((evt) => {
+                if (!evt.detail) return;
+                if (evt.detail.type === 'VKWebAppViewRestore') {
+                    dispatch('closeToast');
+                }
+            });
+
             // notifications
             const notifications = Number.parseInt(getSearch().get('vk_are_notifications_enabled'), 10) !== 0;
             commit('setNotifications', notifications);
@@ -147,14 +168,30 @@ export default new Vuex.Store({
                     commit('setShowOnboarding', true);
                 }
             }
-
-            // init
-            await dispatch('api', { method: 'init', data: {} });
         },
 
         saveOnboarding({ commit }) {
             commit('setShowOnboarding', false);
             VKC.send('VKWebAppStorageSet', { key: 'onboarded', value: '1' });
+        },
+
+        closeToast({ commit, state }) {
+            if (state && state.lastToast && state.lastToast.close) {
+                state.lastToast.close();
+            }
+            commit('setToast', null);
+        },
+
+        openDialog({ commit }, dialog) {
+            commit('setCurrentDialog', dialog);
+            window.history.pushState('dialog', null);
+        },
+
+        closeDialog({ state, commit }) {
+            if (state.currentDialog && state.currentDialog.opened) {
+                state.currentDialog.close();
+            }
+            commit('setCurrentDialog', null);
         },
     },
 });

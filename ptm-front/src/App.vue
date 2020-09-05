@@ -15,7 +15,7 @@
                                     <i>Путь в тысячу ли начинается с одного шага (Лао-Цзы)</i>
                                 </span>
                             </div>
-                            <f7-button fill @click="slideNext">Далее</f7-button>
+                            <f7-button fill @click="slideNext" class="fix-height">Далее</f7-button>
                         </div>
                     </f7-swiper-slide>
                     <f7-swiper-slide>
@@ -34,7 +34,7 @@
                                     </i>
                                 </span>
                             </div>
-                            <f7-button fill @click="slideNext">Далее</f7-button>
+                            <f7-button fill @click="slideNext" class="fix-height">Далее</f7-button>
                         </div>
                     </f7-swiper-slide>
                     <f7-swiper-slide>
@@ -51,7 +51,7 @@
                                     </i>
                                 </span>
                             </div>
-                            <f7-button fill @click="start">Начать</f7-button>
+                            <f7-button fill @click="start" class="fix-height">Начать</f7-button>
                         </div>
                     </f7-swiper-slide>
                 </f7-swiper>
@@ -62,6 +62,8 @@
 </template>
 
 <script>
+/* eslint-disable global-require */
+
 import Main from '@/views/Main.vue';
 import Create from '@/views/Create.vue';
 import Village from '@/views/Village.vue';
@@ -106,16 +108,43 @@ export default {
         isLoading() {
             return this.$store.state.isLoading;
         },
+        noInternet() {
+            return this.$store.state.noInternet;
+        },
     },
     watch: {
         isLoading(l) {
             if (l) this.$f7.preloader.show();
             else this.$f7.preloader.hide();
         },
+        noInternet(n) {
+            if (n) {
+                const toast = this.$f7.toast.create({
+                    text: 'Нет подключения к интернету, попробуйте позже',
+                    position: 'center',
+                    cssClass: 'my-text-center',
+                    closeTimeout: 2500,
+                });
+                toast.open();
+                this.$store.commit('setToast', toast);
+            }
+        },
     },
     mounted() {
         window.addEventListener('contextmenu', (e) => { e.preventDefault(); });
         this.$store.dispatch('init');
+
+        // popup close by back button
+        window.addEventListener('popstate', () => {
+            if (this.$store.state.currentDialog && this.$store.state.currentDialog.opened) {
+                this.$store.dispatch('closeDialog');
+            }
+        });
+
+        // preload base village image
+        const base = require('./assets/pagoda_base.svg');
+        const img = new Image();
+        img.src = base;
     },
 };
 </script>
@@ -125,6 +154,15 @@ body {
     -webkit-user-select: none;
     user-select: none;
     overscroll-behavior-y: none;
+}
+
+*:not(input), *:focus:not(input) {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    outline-style:none;
 }
 
 html,
@@ -236,5 +274,9 @@ body {
 
 .ob-pic > img {
     width: 100%;
+}
+
+.fix-height {
+    min-height: var(--f7-button-height);
 }
 </style>

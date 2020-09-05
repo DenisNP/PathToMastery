@@ -10,17 +10,17 @@ export const generateSticker = async (d, name) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     await drawImage(sticker, 0, 0);
-    ctx.font = 'bold 30px sans-serif';
+    ctx.font = 'bold 60px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#222121';
 
     ctx.fillText(
         `${d.msD} ${getNumericPhrase(d.msD, 'день', 'дня', 'дней')}`,
-        155,
-        80,
+        310,
+        160,
     );
 
-    ctx.font = '16px sans-serif';
+    ctx.font = '32px sans-serif';
     ctx.textAlign = 'center';
     ctx.fillStyle = '#222121';
 
@@ -30,15 +30,15 @@ export const generateSticker = async (d, name) => {
 
         const firstLine = lines[0].join(' ');
         if (lines.length === 1) {
-            ctx.fillText(firstLine, 155, 32);
+            ctx.fillText(firstLine, 310, 64);
         } else if (lines.length >= 2) {
-            ctx.fillText(firstLine, 155, 25);
+            ctx.fillText(firstLine, 310, 50);
             let secondLine = lines[1].join(' ');
             if (lines.length > 2) secondLine += ` ${lines[2].join(' ')}`;
-            ctx.fillText(secondLine, 155, 45);
+            ctx.fillText(secondLine, 310, 90);
         }
     } else {
-        ctx.fillText(name, 155, 32);
+        ctx.fillText(name, 310, 64);
     }
 
     return canvas.toDataURL('image/png');
@@ -53,6 +53,7 @@ export const createStory = async (d, name) => ({
                 content_type: 'image',
                 blob: await generateSticker(d, name),
                 transform: {
+                    relation_width: 250 / document.documentElement.clientWidth,
                     rotation: -10,
                     translation_x: 0,
                     translation_y: 0.3,

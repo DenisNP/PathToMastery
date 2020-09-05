@@ -50,7 +50,7 @@
                 />
             </div>
         </div>
-        <f7-fab position="right-bottom" class="village-btn" @click="openVillage">
+        <f7-fab position="right-bottom" class="village-btn" @click="openVillage" v-if="showVillage">
             <img src="../assets/village_button.svg"/>
         </f7-fab>
         <f7-sheet
@@ -98,6 +98,11 @@ export default {
         current() {
             return this.$store.state.calendarSelected;
         },
+        showVillage() {
+            return this.$store.state.village
+                && this.$store.state.village.pagodas
+                && this.$store.state.village.pagodas.length;
+        },
     },
     methods: {
         edit(num) {
@@ -111,12 +116,14 @@ export default {
                 ? 'Долгое нажатие — отметиться.<br/><br/>Двойное нажатие — редактировать.'
                 : 'Сегодня нельзя отметиться на этом Пути.<br/><br/>Двойное нажатие — редактировать.';
 
-            this.$f7.toast.create({
+            const toast = this.$f7.toast.create({
                 text,
                 position: 'center',
                 cssClass: 'my-text-center',
                 closeTimeout: 2500,
-            }).open();
+            });
+            toast.open();
+            this.$store.commit('setToast', toast);
 
             VKC.bridge().send('VKWebAppTapticNotificationOccurred', { type: 'warning' });
         },
@@ -138,12 +145,14 @@ export default {
                 )) {
                 this.milestone(today);
             } else {
-                this.$f7.toast.create({
+                const toast = this.$f7.toast.create({
                     text: 'Готово, продолжайте в том же духе!',
                     position: 'center',
                     cssClass: 'my-text-center',
                     closeTimeout: 2500,
-                }).open();
+                });
+                toast.open();
+                this.$store.commit('setToast', toast);
             }
         },
         async milestone(d) {

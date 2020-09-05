@@ -77,12 +77,14 @@ export default {
             if (d.msD > 0) {
                 this.$emit('milestone', d);
             } else if (d.type === 'Checkpoint') {
-                this.$f7.toast.create({
+                const toast = this.$f7.toast.create({
                     text: 'В этот день будет следующий шаг на данном Пути',
                     position: 'center',
                     cssClass: 'my-text-center',
                     closeTimeout: 2000,
-                }).open();
+                });
+                toast.open();
+                this.$store.commit('setToast', toast);
             }
         },
     },
