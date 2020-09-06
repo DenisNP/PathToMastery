@@ -3,10 +3,7 @@
         <f7-navbar title="Ваш прогресс" back-link/>
         <transition name="popup">
             <div class="onboarding" v-if="$store.state.showVillageInfo" @click="closeInfo">
-                <div
-                    class="onboarding-slide slide-small"
-                    @click.prevent="() => {}"
-                >
+                <div class="onboarding-slide slide-small">
                     <div class="ob-pic">
                         <img src="../assets/onboarding_3.jpg">
                     </div>

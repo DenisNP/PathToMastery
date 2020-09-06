@@ -22,36 +22,23 @@ namespace PathToMastery.Controllers
         private readonly ConcurrencyService _concurrencyService;
         private readonly PathService _pathService;
         private readonly ILogger<MainController> _logger;
-        private readonly IDbService _dbService;
 
         public MainController(
             ISocialService socialService,
             ConcurrencyService concurrencyService,
             PathService pathService,
-            ILogger<MainController> logger,
-            IDbService dbService
+            ILogger<MainController> logger
         )
         {
             _socialService = socialService;
             _concurrencyService = concurrencyService;
             _pathService = pathService;
             _logger = logger;
-            _dbService = dbService;
         }
         
         [HttpGet("/test")]
         public ContentResult Test()
         {
-            var r = new Random();
-            var users = _dbService.Collection<User>().ToList();
-            
-            foreach (var user in users)
-            {
-                if (user.Seed != 0) continue;
-                user.Seed = r.Next(); 
-                _dbService.Update(user);
-            }
-
             return new ContentResult
             {
                 ContentType = "text/html",
