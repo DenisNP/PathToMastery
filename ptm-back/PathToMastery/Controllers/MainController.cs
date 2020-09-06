@@ -59,7 +59,8 @@ namespace PathToMastery.Controllers
                 req =>
                     new StateResponse(
                         _pathService.CreateEditPath(req.UserId, req.Id, req.Name, req.Icon, req.Color, req.Days, req.Notify, req.Offset)
-                    )
+                    ),
+                    true
             );
         }
         
@@ -67,7 +68,8 @@ namespace PathToMastery.Controllers
         public Task Delete()
         {
             return HandleRequest<IdRequest, StateResponse>(
-                req => new StateResponse(_pathService.DeletePath(req.UserId, req.Id, req.Offset))
+                req => new StateResponse(_pathService.DeletePath(req.UserId, req.Id, req.Offset)),
+                true
             );
         }
         
@@ -75,7 +77,8 @@ namespace PathToMastery.Controllers
         public Task Done()
         {
             return HandleRequest<IdRequest, StateResponse>(
-                req => new StateResponse(_pathService.SetDone(req.UserId, req.Id, req.Offset))
+                req => new StateResponse(_pathService.SetDone(req.UserId, req.Id, req.Offset)),
+                true
             );
         }
         
