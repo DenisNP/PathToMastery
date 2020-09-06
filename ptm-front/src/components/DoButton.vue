@@ -35,7 +35,7 @@ export default {
         mousedown() {
             this.touchStartTime = 0;
             clearInterval(this.interval);
-            this.progress = 0;
+            this.setProgress(0);
             if (this.active && this.data.canBeDone) {
                 this.touchStartTime = (new Date()).getTime();
                 this.interval = setInterval(this.calculateProgress, 10);
@@ -52,7 +52,7 @@ export default {
                 clearInterval(this.interval);
                 if (diff < this.waitTime) {
                     this.touchStartTime = 0;
-                    this.progress = 0;
+                    this.setProgress(0);
                     if (diff < this.waitTime / 2 || !this.data.canBeDone) this.clicked();
                 } else if (this.data.canBeDone) {
                     // this.setDone();
@@ -87,7 +87,8 @@ export default {
             this.$emit('edit');
         },
         calculateProgress() {
-            this.progress = ((new Date()).getTime() - this.touchStartTime) / this.waitTime;
+            const progress = ((new Date()).getTime() - this.touchStartTime) / this.waitTime;
+            this.setProgress(progress);
             if (this.progress >= 1) {
                 this.setDone();
             }
@@ -96,11 +97,15 @@ export default {
             this.disableMouseUp = true;
             this.touchStartTime = 0;
             clearInterval(this.interval);
-            this.progress = 0;
+            this.setProgress(0);
             this.$emit('done');
             setTimeout(() => {
                 this.disableMouseUp = false;
             }, 2000);
+        },
+        setProgress(p) {
+            this.progress = p;
+            this.$store.commit('setDoneProgress', p);
         },
     },
     props: {

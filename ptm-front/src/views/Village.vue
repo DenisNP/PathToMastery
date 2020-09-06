@@ -28,6 +28,14 @@
                     <span>{{p.name}}</span>
                 </div>
             </div>
+            <div class="user-footer flex items-center content-center justify-center">
+                <div class="flex items-center content-center justify-center">
+                    <div class="avatar mr2">
+                        <img :src="user.image" class="w-100 h-100"/>
+                    </div>
+                    <div class="fw5">{{user.name}}</div>
+                </div>
+            </div>
         </div>
     </f7-page>
 </template>
@@ -90,6 +98,9 @@ export default {
         },
         village() {
             return this.$store.state.village;
+        },
+        user() {
+            return this.$store.state.usersData[this.$store.state.user.id];
         },
     },
 };
@@ -191,6 +202,21 @@ export default {
     max-width: 100%;
     text-align: center;
     max-height: 40px;
+    overflow: hidden;
+}
+
+.user-footer {
+    position: absolute;
+    top: 77px;
+    left: 0;
+    width: 100%;
+    height: 51px;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
     overflow: hidden;
 }
 </style>

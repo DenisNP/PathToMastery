@@ -13,11 +13,13 @@ export default new Vuex.Store({
         isLoading: false,
         noInternet: false,
         showOnboarding: false,
+        usersData: {},
         lastToast: null,
         currentDialog: null,
         calendarSelected: 2,
         notifications: true,
         currentMonth: 8,
+        doneProgress: 0,
         colors: [
             ['#222121', '#29323C', '#485563', '#FFFFFF'],
             ['#FF1F47', '#FF0844', '#FFB199', '#FFFFFF'],
@@ -118,6 +120,16 @@ export default new Vuex.Store({
         setCurrentDialog(state, cDialog) {
             state.currentDialog = cDialog;
         },
+        setDoneProgress(state, dp) {
+            state.doneProgress = dp;
+        },
+        addUser(state, usr) {
+            state.usersData[usr.id] = {
+                id: usr.id.toString(),
+                name: `${usr.first_name || ''} ${usr.last_name || ''}`.trim(),
+                image: usr.photo_100,
+            };
+        },
     },
     actions: {
         async api({ commit }, { method, data, disableLoading }) {
@@ -167,6 +179,12 @@ export default new Vuex.Store({
                 if (!onb.keys.some((k) => k.key === 'onboarded' && k.value)) {
                     commit('setShowOnboarding', true);
                 }
+            }
+
+            // load user data
+            const [uData] = await VKC.send('VKWebAppGetUserInfo');
+            if (uData && uData.first_name) {
+                commit('addUser', uData);
             }
         },
 

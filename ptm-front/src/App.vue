@@ -156,13 +156,8 @@ body {
     overscroll-behavior-y: none;
 }
 
-*:not(input), *:focus:not(input) {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    outline-style:none;
+a, a:active, a:focus{
+    outline: none!important;
 }
 
 html,
