@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using PathToMastery.Models;
 using PathToMastery.Models.Web.Request;
 using PathToMastery.Models.Web.Response;
 using PathToMastery.Services;
@@ -20,27 +22,52 @@ namespace PathToMastery.Controllers
         private readonly ConcurrencyService _concurrencyService;
         private readonly PathService _pathService;
         private readonly ILogger<MainController> _logger;
+        private readonly IDbService _dbService;
 
         public MainController(
             ISocialService socialService,
             ConcurrencyService concurrencyService,
             PathService pathService,
-            ILogger<MainController> logger
+            ILogger<MainController> logger,
+            IDbService dbService
         )
         {
             _socialService = socialService;
             _concurrencyService = concurrencyService;
             _pathService = pathService;
             _logger = logger;
+            _dbService = dbService;
         }
         
         [HttpGet("/test")]
         public ContentResult Test()
         {
+            var r = new Random();
+            var users = _dbService.Collection<User>().Where(u => u.Seed == 0).ToList();
+            
+            foreach (var user in users)
+            {
+                user.Seed = r.Next(); 
+                _dbService.Update(user);
+            }
+
             return new ContentResult
             {
                 ContentType = "text/html",
                 Content = "<h1>It works!</h1>"
+            };
+        }
+
+        [HttpGet("/demo")]
+        public ContentResult Demo()
+        {
+            var demoService = new PathDemoService(new MockUserDb(), new UtilsService(), new MilestoneService(), new VillageService());
+            var demoState = demoService.GenerateDemo();
+
+            return new ContentResult
+            {
+                ContentType = "application/json",
+                Content = JsonConvert.SerializeObject(demoState)
             };
         }
 

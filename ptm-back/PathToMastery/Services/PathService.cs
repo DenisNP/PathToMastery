@@ -138,9 +138,7 @@ namespace PathToMastery.Services
 
         private void SetDone(PathData data, int offset)
         {
-            var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
-            now -= now.TimeOfDay;
-
+            var now = Now(offset);
             var dow = now.NormalDow();
             
             // check if it can be done
@@ -198,9 +196,7 @@ namespace PathToMastery.Services
 
         private Path GenerateCalendar(PathData data, int offset)
         {
-            var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
-            now -= now.TimeOfDay;
-            
+            var now = Now(offset);
             var min = _utilsService.ToClosestDown(now - TimeSpan.FromDays(30), 1);
             var max = _utilsService.ToClosestUp(now + TimeSpan.FromDays(60), 7);
 
@@ -312,6 +308,12 @@ namespace PathToMastery.Services
             path.CanBeDone = data.Days.Contains(cDow) && !isTodayDone;
             
             return path;
+        }
+
+        protected virtual DateTimeOffset Now(int offset)
+        {
+            var now = new DateTimeOffset(DateTime.UtcNow).ToOffset(TimeSpan.FromHours(offset));
+            return now - now.TimeOfDay;
         }
 
         public PathData PathFromId(User user, int id)

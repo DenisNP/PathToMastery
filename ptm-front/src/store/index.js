@@ -13,6 +13,7 @@ export default new Vuex.Store({
         isLoading: false,
         noInternet: false,
         showOnboarding: false,
+        showVillageInfo: false,
         usersData: {},
         lastToast: null,
         currentDialog: null,
@@ -107,6 +108,9 @@ export default new Vuex.Store({
         setShowOnboarding(state, onb) {
             state.showOnboarding = onb;
         },
+        setShowVillageInfo(state, vi) {
+            state.showVillageInfo = vi;
+        },
         setState(state, s) {
             state.user = s.user;
             state.first = s.first;
@@ -174,10 +178,16 @@ export default new Vuex.Store({
             commit('setNotifications', notifications);
 
             // onboarded
-            const [onb] = await VKC.send('VKWebAppStorageGet', { keys: ['onboarded'] });
+            const [onb] = await VKC.send(
+                'VKWebAppStorageGet',
+                { keys: ['onboarded', 'villageShown'] },
+            );
             if (onb && onb.keys) {
                 if (!onb.keys.some((k) => k.key === 'onboarded' && k.value)) {
                     commit('setShowOnboarding', true);
+                }
+                if (!onb.keys.some((k) => k.key === 'villageShown' && k.value)) {
+                    commit('setShowVillageInfo', true);
                 }
             }
 
@@ -191,6 +201,11 @@ export default new Vuex.Store({
         saveOnboarding({ commit }) {
             commit('setShowOnboarding', false);
             VKC.send('VKWebAppStorageSet', { key: 'onboarded', value: '1' });
+        },
+
+        saveVillageInfo({ commit }) {
+            commit('setShowVillageInfo', false);
+            VKC.send('VKWebAppStorageSet', { key: 'villageShown', value: '1' });
         },
 
         closeToast({ commit, state }) {

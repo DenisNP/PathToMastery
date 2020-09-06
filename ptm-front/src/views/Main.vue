@@ -1,7 +1,12 @@
 <template>
     <f7-page>
         <f7-navbar>
-            <img src="../assets/logo.svg" class="logo-image ml3" slot="left">
+            <img
+                src="../assets/logo.svg"
+                class="logo-image ml3"
+                slot="left"
+                @click="showOnboarding"
+            >
         </f7-navbar>
         <calendar @milestone="milestone"/>
         <div class="w-100 mt4 relative">
@@ -172,6 +177,9 @@ export default {
         },
         openVillage() {
             this.$f7.views.main.router.navigate('/village');
+        },
+        showOnboarding() {
+            this.$store.commit('setShowOnboarding', true);
         },
     },
     components: { DoButton, Calendar },

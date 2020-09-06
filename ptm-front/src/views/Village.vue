@@ -1,7 +1,28 @@
 <template>
     <f7-page class="village-page relative">
         <f7-navbar title="Ваш прогресс" back-link/>
-        <div class="village-bg">
+        <transition name="popup">
+            <div class="onboarding" v-if="$store.state.showVillageInfo" @click="closeInfo">
+                <div
+                    class="onboarding-slide slide-small"
+                    @click.prevent="() => {}"
+                >
+                    <div class="ob-pic">
+                        <img src="../assets/onboarding_3.jpg">
+                    </div>
+                    <div class="ob-text">
+                        Эта деревня отражает ваши стремления к успеху. Она будет разрастаться
+                        по мере непрерывного следования по Путям и, наоборот, уменьшаться при
+                        пропусках.
+                        <span class="ob-small">
+                            <i>Как бы высока ни была гора, когда-нибудь и по ней пройдет дорога
+                                (Китайская пословица)</i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </transition>
+        <div class="village-bg" @click="showInfo">
             <img src="../assets/village_bg.svg" alt="background"/>
             <div
                 class="pagoda"
@@ -28,14 +49,14 @@
                     <span>{{p.name}}</span>
                 </div>
             </div>
-            <div class="user-footer flex items-center content-center justify-center">
-                <div class="flex items-center content-center justify-center">
-                    <div class="avatar mr2">
-                        <img :src="user.image" class="w-100 h-100"/>
-                    </div>
-                    <div class="fw5">{{user.name}}</div>
-                </div>
-            </div>
+<!--            <div class="user-footer flex items-center content-center justify-center">-->
+<!--                <div class="flex items-center content-center justify-center">-->
+<!--                    <div class="avatar mr2">-->
+<!--                        <img :src="user.image" class="w-100 h-100"/>-->
+<!--                    </div>-->
+<!--                    <div class="fw5">{{user.name}}</div>-->
+<!--                </div>-->
+<!--            </div>-->
         </div>
     </f7-page>
 </template>
@@ -101,6 +122,14 @@ export default {
         },
         user() {
             return this.$store.state.usersData[this.$store.state.user.id];
+        },
+    },
+    methods: {
+        closeInfo() {
+            this.$store.dispatch('saveVillageInfo');
+        },
+        showInfo() {
+            this.$store.commit('setShowVillageInfo', true);
         },
     },
 };
@@ -170,7 +199,8 @@ export default {
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 20px;
     width: calc(100% - 50px);
-    height: 128px;
+    /*height: 128px;*/
+    height: 77px;
     left: 25px;
 }
 
@@ -218,5 +248,11 @@ export default {
     height: 32px;
     border-radius: 50%;
     overflow: hidden;
+}
+
+.slide-small {
+    /*noinspection CssInvalidFunction*/
+    height: calc(100vh - 175px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    margin-top: 75px;
 }
 </style>
