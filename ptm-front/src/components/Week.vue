@@ -187,7 +187,7 @@ export default {
         width: 50px;
         height: 50px;
         top: 2px;
-        left: 1px;
+        left: 2px;
         opacity: 0.5;
     }
 </style>
