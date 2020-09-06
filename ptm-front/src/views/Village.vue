@@ -192,7 +192,8 @@ export default {
 
 .village-bottom {
     position: absolute;
-    bottom: 25px;
+    /*noinspection CssInvalidFunction*/
+    bottom: calc(25px + env(safe-area-inset-bottom));
     background-color: rgba(255, 255, 255, 0.5);
     border-radius: 20px;
     width: calc(100% - 50px);
@@ -250,6 +251,7 @@ export default {
 .slide-small {
     /*noinspection CssInvalidFunction*/
     height: calc(100vh - 175px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-    margin-top: 75px;
+    /*noinspection CssInvalidFunction*/
+    margin-top: calc(75px + env(safe-area-inset-top));
 }
 </style>
