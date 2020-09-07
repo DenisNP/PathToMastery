@@ -35,7 +35,13 @@ export default {
     components: { Week },
     methods: {
         calendarScroll(e) {
-            let skipWeeks = Math.round(e.target.scrollTop / weekHeight);
+            let { scrollTop } = e.target;
+            const scrollRange = e.currentTarget.scrollHeight - e.currentTarget.offsetHeight;
+            if (scrollRange <= e.currentTarget.scrollTop) {
+                scrollTop = scrollRange;
+            }
+
+            let skipWeeks = Math.round(scrollTop / weekHeight);
             if (this.weeks.length < skipWeeks + weeksToCheck) {
                 skipWeeks = this.weeks.length - weeksToCheck;
             }
