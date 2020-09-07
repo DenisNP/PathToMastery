@@ -4,10 +4,10 @@
             v-for="d in days"
             :key="d.dow"
             class="tc width-100 pv3 f5 relative"
-            :class="{'o-40': d.m !== $store.state.currentMonth, 'fw7': isCurrent(d)}"
+            :class="{'fw7': isCurrent(d)}"
             @click="showDay(d)"
         >
-            {{d.d}}
+            <span :class="{'o-40': d.m !== $store.state.currentMonth}">{{d.d}}</span>
             <div
                 v-show="d.type === 'Link' || d.type === 'DoneLink'"
                 class="link-chunk"
@@ -21,8 +21,10 @@
             <div
                 v-if="d.type === 'DoneLink'
                     || d.type === 'Done'
-                    || d.type === 'DoneBreak'"
+                    || d.type === 'DoneBreak'
+                    || d.type === 'Checkpoint'"
                 class="point"
+                :class="{'o-40': d.type === 'Checkpoint'}"
                 :style="`color: ${color};`"
             >
                 <svg width="10" height="10" viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
@@ -30,11 +32,6 @@
                     <rect y="4.94975" width="7" height="7" rx="2" transform="rotate(-45 0 4.94975)"/>
                 </svg>
             </div>
-            <div
-                class="checkpoint"
-                v-if="d.type === 'Checkpoint'"
-                :style="`background-color: ${color};`"
-            />
             <div
                 v-if="d.type === 'Break'"
                 class="break"
@@ -49,6 +46,7 @@
                 v-if="d.msD > 0"
                 class="milestone"
                 :style="`color: ${color};`"
+                :class="{'o-40': d.type === 'N' || d.type === 'Checkpoint'}"
             >
                 <svg width="34" height="31" viewBox="0 0 34 31" xmlns="http://www.w3.org/2000/svg">
                     <!-- eslint-disable-next-line max-len -->

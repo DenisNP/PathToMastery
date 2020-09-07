@@ -7,7 +7,7 @@
                     <div class="ob-pic">
                         <img src="../assets/onboarding_3.jpg">
                     </div>
-                    <div class="ob-text">
+                    <div class="ob-text mv2">
                         Эта деревня отражает ваши стремления к успеху. Она будет разрастаться
                         по мере непрерывного следования по Путям и, наоборот, уменьшаться при
                         пропусках.
@@ -16,6 +16,7 @@
                                 (Китайская пословица)</i>
                         </span>
                     </div>
+                    <f7-button fill @click="closeInfo" class="fix-height">ОК</f7-button>
                 </div>
             </div>
         </transition>
@@ -35,7 +36,7 @@
                     :src="roofs[p.level - 1][p.color - 1]" alt="roof"/>
             </div>
         </div>
-        <div class="village-bottom">
+        <div class="village-bottom" v-if="!$store.state.showVillageInfo">
             <div class="village-header">
                 <div v-for="p in village.paths" :key="p.name + p.color" class="path-data-block">
                     <f7-badge
@@ -208,7 +209,7 @@ export default {
     left: 0;
     border-radius: 20px;
     background-color: rgba(255, 255, 255, 0.5);
-    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+    /*box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);*/
     width: 100%;
     height: 77px;
     --f7-badge-font-weight: bold;
@@ -253,5 +254,7 @@ export default {
     height: calc(100vh - 175px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
     /*noinspection CssInvalidFunction*/
     margin-top: calc(75px + env(safe-area-inset-top));
+    padding-bottom: 20px;
+    padding-top: 30px;
 }
 </style>
