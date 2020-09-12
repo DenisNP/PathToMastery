@@ -1,5 +1,4 @@
 ﻿using System;
-using PathToMastery.Models;
 using PathToMastery.Models.State;
 using PathToMastery.Services.Abstract;
 
@@ -44,6 +43,11 @@ namespace PathToMastery.Services
                     (2, 9),
                     (3, 9),
                     (4, 9),
+                    (7, 9),
+                    (8, 9),
+                    (9, 9),
+                    (10, 9),
+                    (11, 9),
                 }
             );
             
@@ -66,6 +70,11 @@ namespace PathToMastery.Services
                     (4, 9),
                     (5, 9),
                     (6, 9),
+                    (7, 9),
+                    (8, 9),
+                    (9, 9),
+                    (10, 9),
+                    (11, 9),
                 }
             );
             
@@ -84,6 +93,8 @@ namespace PathToMastery.Services
                     (2, 9),
                     (4, 9),
                     (7, 9),
+                    (9, 9),
+                    (11, 9),
                 }
             );
 
